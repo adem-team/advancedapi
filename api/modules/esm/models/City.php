@@ -1,5 +1,5 @@
 <?php
-namespace api\modules\v1\models;
+namespace api\modules\esm\models;
 use \yii\db\ActiveRecord;
 /**
  *
@@ -7,6 +7,12 @@ use \yii\db\ActiveRecord;
  */
 class City extends ActiveRecord 
 {
+    public static function getDb()
+    {
+        /* Author -ptr.nov- :UMUM */
+        return \Yii::$app->get('db_gsn');
+    }
+
 	/**
 	 * @inheritdoc
 	 */

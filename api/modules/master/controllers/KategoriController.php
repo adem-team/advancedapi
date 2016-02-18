@@ -30,27 +30,36 @@ class KategoriController extends ActiveController
 		'collectionEnvelope' => 'Kategori',
 	];
 	  
-    public function behaviors()    {
-        return ArrayHelper::merge(parent::behaviors(), [
-            'authenticator' => [
+    public function behaviors()    
+    {
+        return ArrayHelper::merge(parent::behaviors(), 
+        [
+            'authenticator' => 
+            [
                 'class' => CompositeAuth::className(),
-                'authMethods' => [
-                    ['class' => HttpBearerAuth::className()],
-                    ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
+                'authMethods' => 
+                [
+                    // ['class' => HttpBearerAuth::className()],
+                    // ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
                 ]
             ],
-			'bootstrap'=> [
+			'bootstrap'=> 
+            [
 				'class' => ContentNegotiator::className(),
-				'formats' => [
+				'formats' => 
+                [
 					'application/json' => Response::FORMAT_JSON,
 				],
 			],
-            'corsFilter' => [
-            'class' => \yii\filters\Cors::className(),
-            'cors' => [
+
+            'corsFilter' => 
+            [
+                'class' => \yii\filters\Cors::className(),
+                'cors' => 
+                [
                     // restrict access to
                     'Origin' =>['*'],// ['http://ptrnov-erp.dev', 'https://ptrnov-erp.dev'],
-                    'Access-Control-Request-Method' => ['POST', 'PUT'],
+                    'Access-Control-Request-Method' => ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
                     // Allow only POST and PUT methods
                     'Access-Control-Request-Headers' => ['X-Wsse'],
                     // Allow only headers 'X-Wsse'

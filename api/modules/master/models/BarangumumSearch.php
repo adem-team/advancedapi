@@ -46,10 +46,13 @@ class BarangumumSearch extends Barangumum
     public function search($params)
     {
         $query = Barangumum::find()->where('B1000.STATUS <> 3');
-		$query->joinWith(['type' => function ($q) {
+		$query->joinWith(['type' => function ($q) 
+        {
 			$q->where('B1001.NM_TYPE LIKE "%' . $this->nmtype . '%"');
 		}]);
-		$query->joinWith(['kategori' => function ($q) {
+        
+		$query->joinWith(['kategori' => function ($q) 
+        {
 			$q->where('B1002.NM_KATEGORI LIKE "%' . $this->nmktegori . '%"');
 		}]);
 
@@ -74,15 +77,16 @@ class BarangumumSearch extends Barangumum
 			]
 		]);
 		
-    if (!($this->load($params) && $this->validate())) {
-        /**
-         * The following line will allow eager loading with country data 
-         * to enable sorting by country on initial loading of the grid.
-         */ 
-        $query->joinWith(['type']);
-        $query->joinWith(['kategori']);
-        return $dataProvider;
-    }
+        if (!($this->load($params) && $this->validate())) 
+        {
+            /**
+             * The following line will allow eager loading with country data 
+             * to enable sorting by country on initial loading of the grid.
+             */ 
+            $query->joinWith(['type']);
+            $query->joinWith(['kategori']);
+            return $dataProvider;
+        }
 
 /*
         $query->andFilterWhere([

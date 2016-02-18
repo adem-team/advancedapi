@@ -18,7 +18,7 @@ class Perusahaan extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'c1000';
+        return 'lg1001';
     }
 
     /**
@@ -26,7 +26,7 @@ class Perusahaan extends \yii\db\ActiveRecord
      */
     public static function getDb()
     {
-        return Yii::$app->get('db4');
+        return Yii::$app->get('db_esm');
     }
 
     /**

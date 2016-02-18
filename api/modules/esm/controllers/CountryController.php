@@ -32,8 +32,8 @@ class CountryController extends ActiveController
             'authenticator' => [
                 'class' => CompositeAuth::className(),
                 'authMethods' => [
-                    ['class' => HttpBearerAuth::className()],
-                    ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
+                    // ['class' => HttpBearerAuth::className()],
+                    // ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
                 ]
             ],
 			'bootstrap'=> [

@@ -184,7 +184,8 @@ class EsmSalesController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function sales_horeca_item(){		
+	protected function sales_horeca_item()
+	{		
 		return Rpt001::find()->where("MODUL_NM='ESM_SALES_HORECA_PER_ITEM' and MODUL_GRP=8")->one()->VAL_VALUE;
 	}
 	/*ESM column2d HEADER*/
