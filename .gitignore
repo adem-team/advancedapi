@@ -1,0 +1,56 @@
+#systemit
+/systemit
+
+#tests
+/tests
+
+#frontend
+/frontend
+
+# backend
+/backend
+
+#common
+/common
+
+# console
+/console
+
+#environments
+/environments
+
+# yii console command
+/yii
+
+# phpstorm project files
+.idea
+
+# netbeans project files
+nbproject
+
+# zend studio for eclipse project files
+.buildpath
+.project
+.settings
+
+# windows thumbnail cache
+Thumbs.db
+
+
+# composer vendor dir
+/vendor
+
+# composer itself is not needed
+composer.phar
+composer.json
+composer.lock
+
+# Mac DS_Store Files
+.DS_Store
+
+# phpunit itself is not needed
+phpunit.phar
+# local phpunit config
+/phpunit.xml
+
+.bowerrc
