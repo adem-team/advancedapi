@@ -32,6 +32,12 @@ use api\modules\master\Perusahaan;
  */
 class Suplier extends \yii\db\ActiveRecord
 {
+    public function __construct()
+    {
+        $this->CREATED_AT = date('Y-m-d H:i:s');
+        $this->UPDATED_AT = date('Y-m-d H:i:s');
+    }
+    
     /**
      * @inheritdoc
      */

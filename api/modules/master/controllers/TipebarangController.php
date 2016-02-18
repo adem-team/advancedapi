@@ -35,8 +35,8 @@ class TipebarangController extends ActiveController
             'authenticator' => [
                 'class' => CompositeAuth::className(),
                 'authMethods' => [
-                    ['class' => HttpBearerAuth::className()],
-                    ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
+                    // ['class' => HttpBearerAuth::className()],
+                    // ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
                 ]
             ],
 			'bootstrap'=> [
@@ -50,7 +50,7 @@ class TipebarangController extends ActiveController
             'cors' => [
                     // restrict access to
                     'Origin' =>['*'],// ['http://ptrnov-erp.dev', 'https://ptrnov-erp.dev'],
-                    'Access-Control-Request-Method' => ['POST', 'PUT'],
+                    'Access-Control-Request-Method' => ['GET','POST', 'PUT'],
                     // Allow only POST and PUT methods
                     'Access-Control-Request-Headers' => ['X-Wsse'],
                     // Allow only headers 'X-Wsse'
@@ -65,10 +65,44 @@ class TipebarangController extends ActiveController
         ]);
     }
 
-	/* public function beforeAction($action) { 
-        $this->enableCsrfValidation = false; 
-        return parent::beforeAction($action); 
-    }  */
+    public function actionSearch()
+    {
+        if (!empty($_GET)) 
+        {
+            $model = new $this->modelClass;
+            foreach ($_GET as $key => $value) 
+            {
+                if (!$model->hasAttribute($key)) 
+                {
+                    throw new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
+                }
+            }
+            try 
+            {
+                $provider = new ActiveDataProvider([
+                    'query' => $model->find()->where($_GET),
+                    'pagination' => false
+                ]);
+            } 
+            catch (Exception $ex) 
+            {
+                throw new \yii\web\HttpException(500, 'Internal server error');
+            }
+
+            if ($provider->getCount() <= 0) 
+            {
+                throw new \yii\web\HttpException(404, 'No entries found with this query string');
+            } 
+            else 
+            {
+                return $provider;
+            }
+        } 
+        else 
+        {
+            throw new \yii\web\HttpException(400, 'There are no query string');
+        }
+    }   
 	
 	
 	

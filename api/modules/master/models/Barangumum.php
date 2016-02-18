@@ -45,6 +45,13 @@ Yii::$app->params['uploadUrl'] = Yii::$app->urlManager->baseUrl . '/web/upload/b
  
 class Barangumum extends \yii\db\ActiveRecord
 {
+
+    public function __construct()
+    {
+        $this->CREATED_AT = date('Y-m-d H:i:s');
+        $this->UPDATED_AT = date('Y-m-d H:i:s');
+    }
+
     /**
      * @inheritdoc
      */
@@ -92,7 +99,7 @@ class Barangumum extends \yii\db\ActiveRecord
 
 	public function getPerusahaan()
     {
-        return $this->hasOne(Perusahaan::className(), ['KD_CORP' => 'KD_CORP']);
+        return $this->hasOne(Perusahaan::className(), ['ID' => 'CORP_ID']);
     }
 	
 	public static function primaryKey()

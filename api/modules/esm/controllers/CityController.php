@@ -1,6 +1,6 @@
 <?php
 
-namespace api\modules\gsn\controllers;
+namespace api\modules\esm\controllers;
 
 use yii;
 use yii\rest\ActiveController;
@@ -14,7 +14,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\gsn\models\City;
+use api\modules\esm\models\City;
 use yii\web\HttpException;
 //use yii\data\ActiveDataProvider;
 /**
@@ -24,7 +24,11 @@ use yii\web\HttpException;
  */
 class CityController extends ActiveController
 {
-    public $modelClass = 'api\modules\gsn\models\City';
+    public $modelClass = 'api\modules\esm\models\City';
+    public $serializer = [
+        'class' => 'yii\rest\Serializer',
+        'collectionEnvelope' => 'City',
+    ];
 	
 	  
     public function behaviors()    {
@@ -32,8 +36,8 @@ class CityController extends ActiveController
             'authenticator' => [
                 'class' => CompositeAuth::className(),
                 'authMethods' => [
-                    ['class' => HttpBearerAuth::className()],
-                    ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
+                    /*['class' => HttpBearerAuth::className()],
+                    ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],*/
                 ]
             ],
 			'bootstrap'=> [

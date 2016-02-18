@@ -12,7 +12,7 @@ class Country extends ActiveRecord
 	public static function getDb()
     {
         /* Author -ptr.nov- :UMUM */
-        return \Yii::$app->db;
+        return \Yii::$app->get('db_gsn');
     }
 	
 	/**
@@ -35,7 +35,7 @@ class Country extends ActiveRecord
     public function fields()
 	{
 		return [
-			'code','name',
+			'code','name','population'
 		];	
 	}
     public function rules()

@@ -35,8 +35,8 @@ class UnitbarangController extends ActiveController
             'authenticator' => [
                 'class' => CompositeAuth::className(),
                 'authMethods' => [
-                    ['class' => HttpBearerAuth::className()],
-                    ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
+                    // ['class' => HttpBearerAuth::className()],
+                    // ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
                 ]
             ],
 			'bootstrap'=> [
@@ -50,7 +50,7 @@ class UnitbarangController extends ActiveController
             'cors' => [
                     // restrict access to
                     'Origin' =>['*'],// ['http://ptrnov-erp.dev', 'https://ptrnov-erp.dev'],
-                    'Access-Control-Request-Method' => ['POST', 'PUT'],
+                    'Access-Control-Request-Method' => ['GET','POST', 'PUT'],
                     // Allow only POST and PUT methods
                     'Access-Control-Request-Headers' => ['X-Wsse'],
                     // Allow only headers 'X-Wsse'

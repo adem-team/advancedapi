@@ -55,8 +55,8 @@ class PilotpController extends ActiveController
             'authenticator' => [
                 'class' => CompositeAuth::className(),
                 'authMethods' => [
-                 ['class' => HttpBearerAuth::className()],
-                 ['class' => QueryParamAuth::className()],//, 'tokenParam' => 'access-token'],
+                 // ['class' => HttpBearerAuth::className()],
+                 // ['class' => QueryParamAuth::className()],//, 'tokenParam' => 'access-token'],
                 ]
             ],
 			'bootstrap'=> [
@@ -73,7 +73,7 @@ class PilotpController extends ActiveController
 				'class' => \yii\filters\Cors::className(),
 				'cors' => [
 					// restrict access to
-					'Origin' => ['http://lukisongroup.com','http://www.lukisongroup.com', 'http://lukisongroup.int'],
+					'Origin' => ['*'],
 					'Access-Control-Request-Method' => ['POST', 'PUT','GET'],
 					// Allow only POST and PUT methods
 					'Access-Control-Request-Headers' => ['X-Wsse'],

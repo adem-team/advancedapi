@@ -22,10 +22,13 @@ class Barangumumupload extends Model
 
     public function upload()
     {
-        if ($this->validate()) {
+        if ($this->validate()) 
+        {
             $this->IMAGE->saveAs('upload/' . $this->IMAGE->baseName . '.' . $this->IMAGE->extension);
             return true;
-        } else {
+        } 
+        else 
+        {
             return false;
         }
     }

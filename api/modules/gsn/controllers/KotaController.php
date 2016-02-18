@@ -31,26 +31,35 @@ class KotaController extends ActiveController
 		'collectionEnvelope' => 'Kota',
 	];
 	  
-    public function behaviors()    {
-        return ArrayHelper::merge(parent::behaviors(), [
-            'authenticator' => [
+    public function behaviors()    
+    {
+        return ArrayHelper::merge(parent::behaviors(), 
+        [
+            'authenticator' => 
+            [
                 'class' => CompositeAuth::className(),
-                'authMethods' => [
+                'authMethods' => 
+                [
                     ['class' => HttpBearerAuth::className()],
                     ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
                 ]
             ],
-			'bootstrap'=> [
+
+			'bootstrap'=> 
+            [
 				'class' => ContentNegotiator::className(),
-				'formats' => [
+				'formats' => 
+                [
 					'application/json' => Response::FORMAT_JSON,
 				],
 			],
             //'exceptionFilter' => [
             //    'class' => ErrorToExceptionFilter::className()            ],
-			'corsFilter' => [
-            'class' => \yii\filters\Cors::className(),
-				'cors' => [
+			'corsFilter' => 
+            [
+                'class' => \yii\filters\Cors::className(),
+				'cors' => 
+                [
 					// restrict access to
 					'Origin' => ['http://ptrnov-erp.dev', 'https://ptrnov-erp.dev'],
 					'Access-Control-Request-Method' => ['POST', 'PUT'],

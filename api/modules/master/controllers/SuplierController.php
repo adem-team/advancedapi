@@ -25,32 +25,42 @@ use yii\web\HttpException;
 class SuplierController extends ActiveController
 {
     public $modelClass = 'api\modules\master\models\Suplier';
-	public $serializer = [
+	public $serializer = 
+    [
 		'class' => 'yii\rest\Serializer',
 		'collectionEnvelope' => 'Suplier',
 	];
 	  
-    public function behaviors()    {
-        return ArrayHelper::merge(parent::behaviors(), [
-            'authenticator' => [
+    public function behaviors()    
+    {
+        return ArrayHelper::merge(parent::behaviors(), 
+        [
+            'authenticator' => 
+            [
                 'class' => CompositeAuth::className(),
-                'authMethods' => [
-                    ['class' => HttpBearerAuth::className()],
-                    ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
+                'authMethods' => 
+                [
+                    // ['class' => HttpBearerAuth::className()],
+                    // ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
                 ]
             ],
-			'bootstrap'=> [
+			'bootstrap'=> 
+            [
 				'class' => ContentNegotiator::className(),
-				'formats' => [
+				'formats' => 
+                [
 					'application/json' => Response::FORMAT_JSON,
 				],
 			],
-            'corsFilter' => [
-            'class' => \yii\filters\Cors::className(),
-            'cors' => [
+
+            'corsFilter' => 
+            [
+                'class' => \yii\filters\Cors::className(),
+                'cors' => 
+                [
                     // restrict access to
                     'Origin' =>['*'],// ['http://ptrnov-erp.dev', 'https://ptrnov-erp.dev'],
-                    'Access-Control-Request-Method' => ['POST', 'PUT'],
+                    'Access-Control-Request-Method' => ['GET','POST', 'PUT'],
                     // Allow only POST and PUT methods
                     'Access-Control-Request-Headers' => ['X-Wsse'],
                     // Allow only headers 'X-Wsse'
