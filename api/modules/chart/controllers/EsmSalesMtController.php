@@ -110,7 +110,8 @@ class EsmSalesMtController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function sales_summay(){		
+	protected function sales_summay()
+	{		
 		return Rpt001::find()->where("MODUL_NM='ESM_SALES_SUMMARY' and MODUL_GRP=8")->one()->VAL_VALUE;
 	}		
 	
@@ -121,11 +122,13 @@ class EsmSalesMtController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function sales_mt_item(){		
+	protected function sales_mt_item()
+	{		
 		return Rpt001::find()->where("MODUL_NM='ESM_SALES_MT_PER_ITEM' and MODUL_GRP=8")->one()->VAL_VALUE;
 	}
 	/*ESM column2d HEADER*/
-	protected function sales_header_column2d_mt(){
+	protected function sales_header_column2d_mt()
+	{
 		$myHeaderColumn2d_mt = '
 			"SalesItem_Mt":{
 				"chart": {
@@ -167,11 +170,13 @@ class EsmSalesMtController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function sales_gt_item(){		
+	protected function sales_gt_item()
+	{		
 		return Rpt001::find()->where("MODUL_NM='ESM_SALES_GT_PER_ITEM' and MODUL_GRP=8")->one()->VAL_VALUE;
 	}
 	/*ESM column2d HEADER*/
-	protected function sales_header_column2d_gt(){
+	protected function sales_header_column2d_gt()
+	{
 		$myHeaderColumn2d_gt = '
 			"SalesItem_Gt":{
 				"chart": {
@@ -214,7 +219,8 @@ class EsmSalesMtController extends ActiveController
 		return Rpt001::find()->where("MODUL_NM='ESM_SALES_HORECA_PER_ITEM' and MODUL_GRP=8")->one()->VAL_VALUE;
 	}
 	/*ESM column2d HEADER*/
-	protected function sales_header_column2d_horeca(){
+	protected function sales_header_column2d_horeca()
+	{
 		$myHeaderColumn2d_horeca = '
 			"SalesItem_Horeca":{
 				"chart": {
@@ -257,7 +263,8 @@ class EsmSalesMtController extends ActiveController
 		return Rpt001::find()->where("MODUL_NM='ESM_SALES_OTHER_PER_ITEM' and MODUL_GRP=8")->one()->VAL_VALUE;
 	}
 	/*ESM column2d HEADER*/
-	protected function sales_header_column2d_others(){
+	protected function sales_header_column2d_others()
+	{
 		$myHeaderColumn2d_others = '
 			"SalesItem_Others":{
 				"chart": {
@@ -296,7 +303,8 @@ class EsmSalesMtController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function support_header_attrs(){
+	protected function support_header_attrs()
+	{
 		$attrs_support='
 			"support_attrs": 
 				{
@@ -332,7 +340,8 @@ class EsmSalesMtController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function support_header_category(){
+	protected function support_header_category()
+	{
 		$ctg_support='
 			"support_catg":[{
 				"category": [{"label": "jan"},{"label": "feb"},{"label": "mar"},{"label": "apr"},{"label": "mei"},{"label": "jun"},{"label": "jul"},{"label": "ags"},{"label": "sep"},{"label": "okt"},{"label": "nov"},{"label": "Des"}]
@@ -348,7 +357,8 @@ class EsmSalesMtController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function support_dataset(){
+	protected function support_dataset()
+	{
 		/**
 		   * MODUL_NM ='HRM_PERSONALIA_TURNOVER_SUPPORT'
 		   * Group [1 = HRM_PERSONALIA]
