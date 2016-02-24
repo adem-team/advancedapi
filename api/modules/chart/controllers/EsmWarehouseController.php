@@ -110,7 +110,8 @@ class EsmWarehouseController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function wh_summay(){		
+	protected function wh_summay()
+	{		
 		return Rpt001::find()->where("MODUL_NM='ESM_WAREHOUSE_SUMMARY' and MODUL_GRP=7")->one()->VAL_VALUE;
 	}		
 	
@@ -121,11 +122,13 @@ class EsmWarehouseController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function wh_factory_item(){		
+	protected function wh_factory_item()
+	{		
 		return Rpt001::find()->where("MODUL_NM='ESM_WAREHOUSE_FACTORY_PER_ITEM' and MODUL_GRP=7")->one()->VAL_VALUE;
 	}
 	/*ESM PIE HEADER*/
-	protected function wh_header_column2d_factory(){
+	protected function wh_header_column2d_factory()
+	{
 		$myHeaderColumn2d_factory = '
 			"WhFactoryItem":{
 				"chart": {
@@ -148,11 +151,14 @@ class EsmWarehouseController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function wh_distributor_item(){		
+	protected function wh_distributor_item()
+	{		
 		return Rpt001::find()->where("MODUL_NM='ESM_WAREHOUSE_DISTRIBUTOR_PER_ITEM' and MODUL_GRP=7")->one()->VAL_VALUE;
 	}
+	
 	/*ESM PIE HEADER*/
-	protected function wh_header_column2d_distributor(){
+	protected function wh_header_column2d_distributor()
+	{
 		$myHeaderColumn2d_distributor= '
 			"WhDistributorItem":{
 				"chart": {
@@ -175,11 +181,14 @@ class EsmWarehouseController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function wh_subdist_item(){		
+	protected function wh_subdist_item()
+	{		
 		return Rpt001::find()->where("MODUL_NM='ESM_WAREHOUSE_SUBDIST_PER_ITEM' and MODUL_GRP=7")->one()->VAL_VALUE;
 	}
+
 	/*ESM PIE HEADER*/
-	protected function wh_header_column2d_subdist(){
+	protected function wh_header_column2d_subdist()
+	{
 		$myHeaderColumn2d_subdist= '
 			"WhSubdistItem":{
 				"chart": {
@@ -202,11 +211,14 @@ class EsmWarehouseController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function wh_customer_item(){		
+	protected function wh_customer_item()
+	{		
 		return Rpt001::find()->where("MODUL_NM='ESM_WAREHOUSE_CUSTOMER_PER_ITEM' and MODUL_GRP=7")->one()->VAL_VALUE;
 	}
+
 	/*ESM PIE HEADER*/
-	protected function wh_header_column2d_customer(){
+	protected function wh_header_column2d_customer()
+	{
 		$myHeaderColumn2d_subdist= '
 			"WhCustomerItem":{
 				"chart": {
@@ -221,6 +233,7 @@ class EsmWarehouseController extends ActiveController
 		';		
 		return $myHeaderColumn2d_subdist; 
 	}
+
 	/**
 	 * ESM Warehouse - COMBINASI FUNCTION BUILD JSON
 	 * @author ptrnov  <piter@lukison.com>

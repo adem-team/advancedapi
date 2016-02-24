@@ -142,29 +142,32 @@ class ParentbarangController extends ActiveController
         // return array('Customer'=>$results);
 
         // $posts=ParentBarang::find()->with('childs.nama_child')->All();
-        //return $customers = ParentBarang::find()->with('childbarangs')->asArray()->all();
+        return $customers = ParentBarang::find()->with('childbarangs','childbarangs.grandbarangs')->asArray()->all();
 
-        $parents = ParentBarang::find()->all();  // fetches only the authors
-        foreach($parents as $parent) 
-        {
-            $childs=array();
-            foreach($parent->childbarangs as $childbarangs) 
-            {  // fetches the author's posts here
-                $grands=array();
-                foreach($childbarangs->grandbarangs as $grand)
-                {
-                    $grands[] = array('nama'=>$grand->nama);
-                }
+        #Yang Dibawah Ini Jalan Semua Sampai Pada Tanda Tanda Berikutnya
+        // $parents = ParentBarang::find()->all();  // fetches only the authors
+        // foreach($parents as $parent) 
+        // {
+        //     $childs=array();
+        //     foreach($parent->childbarangs as $childbarangs) 
+        //     {  // fetches the author's posts here
+        //         $grands=array();
+        //         foreach($childbarangs->grandbarangs as $grand)
+        //         {
+        //             $grands[] = array('nama'=>$grand->nama);
+        //         }
 
-                $childs[]=array('nama'=>$childbarangs->nama_child,'grand'=>$grands);
-            }
+        //         $childs[]=array('nama'=>$childbarangs->nama_child,'grand'=>$grands);
+        //     }
 
-            $parental[]=array('namaparent'=>$parent->nama_parent,'child'=>$childs);
-        }
-        return $parental;
-                return new ActiveDataProvider([
-            'query' => Post::find(),
-        ]);
+        //     $parental[]=array('namaparent'=>$parent->nama_parent,'child'=>$childs);
+        // }
+        // return array('Parent'=>$parental);
+        //         return new ActiveDataProvider([
+        //     'query' => Post::find(),
+        // ]);
+
+        #Ini adalah Tanda Dari Tanda Yang Sebelumnya
 
     }
 

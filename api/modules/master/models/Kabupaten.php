@@ -48,13 +48,6 @@ class Kabupaten extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * @inheritdoc
-     * @return ProvinsiQuery the active query used by this AR class.
-     */
-   /* public static function find()
-    {
-        return new ProvinsiQuery(get_called_class());
-    }
-*/
+
+
 }
