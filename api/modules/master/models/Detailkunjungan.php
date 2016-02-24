@@ -40,6 +40,12 @@ class Detailkunjungan extends \yii\db\ActiveRecord
         return Yii::$app->get('db3');
     }
 
+    public function __construct()
+    {
+        $this->CREATE_AT = date('Y-m-d H:i:s');
+        $this->UPDATE_AT = date('Y-m-d H:i:s');
+    }
+    
     /**
      * @inheritdoc
      */
