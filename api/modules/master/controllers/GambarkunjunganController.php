@@ -14,21 +14,21 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\ChildBarang;
-use api\modules\master\models\ParentBarang;
+use api\modules\master\models\Gambarkunjungan;
 use yii\web\HttpException;
+
 //use yii\data\ActiveDataProvider;
 /**
  * Country Controller API
  *
  * @author -ptr.nov-
  */
-class ChildbarangController extends ActiveController
+class GambarkunjunganController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\ChildBarang';
+    public $modelClass = 'api\modules\master\models\Gambarkunjungan';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'ChildBarang',
+		'collectionEnvelope' => 'Gambarkunjungan',
 	];
 	  
     public function behaviors()    
@@ -76,12 +76,6 @@ class ChildbarangController extends ActiveController
         ]);
     }
 
-    public function beforeAction($action) 
-    { 
-        $this->enableCsrfValidation = false; 
-        return parent::beforeAction($action); 
-    }
-    
     public function actionSearch()
     {
         if (!empty($_GET)) 
@@ -120,35 +114,6 @@ class ChildbarangController extends ActiveController
             throw new \yii\web\HttpException(400, 'There are no query string');
         }
     }
-    // public function actions()
-    // {
-    //    $actions = parent::actions();
-    //    unset($actions['index'], $actions['update'], $actions['create'], $actions['delete'], $actions['view']);
-    //    return $actions;
-    // }
-
-    // public function actionIndex()
-    // {
-    //     // $results = $this->getCustomers();
-    //     // // foreach($results as $key)
-    //     // // {
-    //     // //    echo $key->CUST_KD ."</br>";
-    //     // //    echo $key->EMAIL ."</br>";
-    //     // // }
-    //     // return array('Customer'=>$results);
-
-    //     // return array('Childbarangs' => $models);
-
-    //    return $posts=ChildBarang::find()
-    //                     ->joinWith('ParentBarang')
-    //                     ->all();
-    // //    $customers = Customer::find()
-    // // ->joinWith('orders')
-    // // ->where(['order.status' => Order::STATUS_ACTIVE])
-    // // ->all();
-
-
-    // }
 }
 
 

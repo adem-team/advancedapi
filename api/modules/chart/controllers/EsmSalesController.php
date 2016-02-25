@@ -121,11 +121,13 @@ class EsmSalesController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function sales_mt_item(){		
+	protected function sales_mt_item()
+	{		
 		return Rpt001::find()->where("MODUL_NM='ESM_SALES_MT_PER_ITEM' and MODUL_GRP=8")->one()->VAL_VALUE;
 	}
 	/*ESM column2d HEADER*/
-	protected function sales_header_column2d_mt(){
+	protected function sales_header_column2d_mt()
+	{
 		$myHeaderColumn2d_mt = '
 			"SalesItem_Mt":{
 				"chart": {
@@ -148,11 +150,13 @@ class EsmSalesController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function sales_gt_item(){		
+	protected function sales_gt_item()
+	{		
 		return Rpt001::find()->where("MODUL_NM='ESM_SALES_GT_PER_ITEM' and MODUL_GRP=8")->one()->VAL_VALUE;
 	}
 	/*ESM column2d HEADER*/
-	protected function sales_header_column2d_gt(){
+	protected function sales_header_column2d_gt()
+	{
 		$myHeaderColumn2d_gt = '
 			"SalesItem_Gt":{
 				"chart": {
@@ -189,7 +193,8 @@ class EsmSalesController extends ActiveController
 		return Rpt001::find()->where("MODUL_NM='ESM_SALES_HORECA_PER_ITEM' and MODUL_GRP=8")->one()->VAL_VALUE;
 	}
 	/*ESM column2d HEADER*/
-	protected function sales_header_column2d_horeca(){
+	protected function sales_header_column2d_horeca()
+	{
 		$myHeaderColumn2d_horeca = '
 			"SalesItem_Horeca":{
 				"chart": {
@@ -212,11 +217,13 @@ class EsmSalesController extends ActiveController
 	 * @author ptrnov  <piter@lukison.com>
 	 * @since 1.1
      */
-	protected function sales_others_item(){		
+	protected function sales_others_item()
+	{		
 		return Rpt001::find()->where("MODUL_NM='ESM_SALES_OTHER_PER_ITEM' and MODUL_GRP=8")->one()->VAL_VALUE;
 	}
 	/*ESM column2d HEADER*/
-	protected function sales_header_column2d_others(){
+	protected function sales_header_column2d_others()
+	{
 		$myHeaderColumn2d_others = '
 			"SalesItem_Others":{
 				"chart": {
