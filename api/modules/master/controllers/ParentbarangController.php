@@ -102,6 +102,11 @@ class ParentbarangController extends ActiveController
                 $provider = new ActiveDataProvider([
                     'query' => $model->find()->where($_GET),
                     'pagination' => false
+
+                    //to add pagination
+                    // 'pagination' => [
+                    //                     'defaultPageSize' => 1,
+                    //                 ],
                 ]);
             } 
             catch (Exception $ex) 
