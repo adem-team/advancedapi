@@ -14,25 +14,21 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Barangumum;
+use api\modules\master\models\Gambarkunjungan;
 use yii\web\HttpException;
-use api\modules\master\models\Kategori;
-use api\modules\master\models\Unitbarang;
-use api\modules\master\models\Suplier;
-use api\modules\master\models\Perusahaan;
-use api\modules\master\models\Tipebarang;;
+
 //use yii\data\ActiveDataProvider;
 /**
  * Country Controller API
  *
  * @author -ptr.nov-
  */
-class BarangController extends ActiveController
+class GambarkunjunganController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Barangumum';
+    public $modelClass = 'api\modules\master\models\Gambarkunjungan';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'Barang',
+		'collectionEnvelope' => 'Gambarkunjungan',
 	];
 	  
     public function behaviors()    
@@ -80,11 +76,44 @@ class BarangController extends ActiveController
         ]);
     }
 
-    public function beforeAction($action) 
-    { 
-        $this->enableCsrfValidation = false; 
-        return parent::beforeAction($action); 
-    } 
+    public function actionSearch()
+    {
+        if (!empty($_GET)) 
+        {
+            $model = new $this->modelClass;
+            foreach ($_GET as $key => $value) 
+            {
+                if (!$model->hasAttribute($key)) 
+                {
+                    throw new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
+                }
+            }
+            try 
+            {
+                $provider = new ActiveDataProvider([
+                    'query' => $model->find()->where($_GET),
+                    'pagination' => false
+                ]);
+            } 
+            catch (Exception $ex) 
+            {
+                throw new \yii\web\HttpException(500, 'Internal server error');
+            }
+
+            if ($provider->getCount() <= 0) 
+            {
+                throw new \yii\web\HttpException(404, 'No entries found with this query string');
+            } 
+            else 
+            {
+                return $provider;
+            }
+        } 
+        else 
+        {
+            throw new \yii\web\HttpException(400, 'There are no query string');
+        }
+    }
 }
 
 

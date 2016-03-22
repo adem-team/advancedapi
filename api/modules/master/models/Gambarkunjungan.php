@@ -5,31 +5,26 @@ namespace api\modules\master\models;
 use Yii;
 
 /**
- * This is the model class for table "c0002scdl_detail".
+ * This is the model class for table "c0002scdl_img".
  *
  * @property string $ID
- * @property string $TGL
- * @property string $CUST_ID
- * @property string $USER_ID
- * @property string $SCDL_GROUP
- * @property double $LAT
- * @property double $LAG
- * @property double $RADIUS
- * @property string $NOTE
+ * @property string $ID_DETAIL
+ * @property string $IMG_NM
+ * @property string $IMG_DECODE
  * @property integer $STATUS
  * @property string $CREATE_BY
  * @property string $CREATE_AT
  * @property string $UPDATE_BY
  * @property string $UPDATE_AT
  */
-class Detailkunjungan extends \yii\db\ActiveRecord
+class Gambarkunjungan extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'c0002scdl_detail';
+        return 'c0002scdl_img';
     }
 
     /**
@@ -45,19 +40,19 @@ class Detailkunjungan extends \yii\db\ActiveRecord
         $this->CREATE_AT = date('Y-m-d H:i:s');
         $this->UPDATE_AT = date('Y-m-d H:i:s');
     }
-    
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['USER_ID','CUST_ID','TGL', 'CREATE_AT', 'UPDATE_AT'],'required'],
-            [['TGL', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
-            [['SCDL_GROUP', 'STATUS'], 'integer'],
-            [['LAT', 'LAG', 'RADIUS'], 'number'],
-            [['NOTE'], 'string'],
-            [['CUST_ID', 'USER_ID'], 'string', 'max' => 50],
+            [['IMG_DECODE','STATUS','CREATE_AT', 'ID_DETAIL', 'IMG_NM','CREATE_BY'],'required'],
+            [['IMG_DECODE'], 'string'],
+            [['STATUS'], 'integer'],
+            [['CREATE_AT', 'UPDATE_AT'], 'safe'],
+            [['ID_DETAIL'], 'string', 'max' => 20],
+            [['IMG_NM'], 'string', 'max' => 255],
             [['CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 100]
         ];
     }
@@ -69,14 +64,9 @@ class Detailkunjungan extends \yii\db\ActiveRecord
     {
         return [
             'ID' => 'ID',
-            'TGL' => 'Tgl',
-            'CUST_ID' => 'Cust  ID',
-            'USER_ID' => 'User  ID',
-            'SCDL_GROUP' => 'Scdl  Group',
-            'LAT' => 'Lat',
-            'LAG' => 'Lag',
-            'RADIUS' => 'Radius',
-            'NOTE' => 'Note',
+            'ID_DETAIL' => 'Id  Detail',
+            'IMG_NM' => 'Img  Nm',
+            'IMG_DECODE' => 'Img  Decode',
             'STATUS' => 'Status',
             'CREATE_BY' => 'Create  By',
             'CREATE_AT' => 'Create  At',
