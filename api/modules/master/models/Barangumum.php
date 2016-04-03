@@ -58,7 +58,7 @@ class Barangumum extends \yii\db\ActiveRecord
 	public $image;
 	public static function tableName()
     {
-        return 'b1000';
+        return 'b0001';
     }
 
     /**

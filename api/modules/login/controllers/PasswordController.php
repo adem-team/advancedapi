@@ -23,24 +23,24 @@ use yii\web\HttpException;
 //use yii\data\ActiveDataProvider;
 
 /**
-  * Controller Pilotproject Class  
+  * Controller Pilotproject Class
   *
   * @author ptrnov  <piter@lukison.com>
   * @since 1.1
   * @link https://github.com/C12D/advanced/blob/master/api/modules/chart/controllers/PilotpController.php
   * @see https://github.com/C12D/advanced/blob/master/api/modules/chart/controllers/PilotpController.php
  */
-class PasswordController extends ActiveController 
-{	
+class PasswordController extends ActiveController
+{
 	/**
-	  * Source Database declaration 
+	  * Source Database declaration
 	 */
     public $modelClass = 'api\modules\login\models\Userlogin';
 	//public $serializer = [
 	//	'class' => 'yii\rest\Serializer',
 	//	'collectionEnvelope' => 'Personalia',
 	//];
-	
+
 	/**
      * @inheritdoc
      */
@@ -62,7 +62,7 @@ class PasswordController extends ActiveController
 					'en',
 					'de',
 				],
-			],			
+			],
 			'corsFilter' => [
 				'class' => \yii\filters\Cors::className(),
 				'cors' => [
@@ -78,12 +78,12 @@ class PasswordController extends ActiveController
 					'Access-Control-Max-Age' => 3600,
 					// Allow the X-Pagination-Current-Page header to be exposed to the browser.
 					'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page'],
-				]		
+				]
 			],
         ]);
-		
+
     }
-	
+
 	/**
      * @inheritdoc
      */
@@ -94,9 +94,9 @@ class PasswordController extends ActiveController
 		 //unset($actions['update'], $actions['create'], $actions['delete'], $actions['view']);
 		 return $actions;
 	 }
-	 
+
 	/**
-     * Get Request Status 
+     * Get Request Status
 	 * @type GET
      */
 	protected function get_status(){
@@ -110,55 +110,65 @@ class PasswordController extends ActiveController
 			}
 		}else{
 			return "false";
-		}	 
-	} 	
-	
+		}
+	}
+
 	/**
      * Get Request token
 	 * @type GET
      */
 	protected function get_tokenp(){
-		$request = Yii::$app->request;				
+		$request = Yii::$app->request;
 		 $models=Userlogin::find()->where("id='".$request->get("id")."' and auth_key='".$request->get("token")."'")->one();
 		if (count($models)!=0){
 			return $models->auth_key;
 		}else{
 			return "none";
-		}	 
-	} 
-	
+		}
+	}
+
 	protected function get_userid(){
-		$request = Yii::$app->request;				
+		$request = Yii::$app->request;
 		 $models=Userlogin::find()->where("id='".$request->get("id")."' and auth_key='".$request->get("token")."'")->one();
 		if (count($models)!=0){
 			return $models->id;
 		}else{
 			return "none";
-		}	 
-	} 
-	
+		}
+	}
+
 	protected function get_usernm(){
-		$request = Yii::$app->request;				
+		$request = Yii::$app->request;
 		 $models=Userlogin::find()->where("id='".$request->get("id")."' and auth_key='".$request->get("token")."'")->one();
 		if (count($models)!=0){
 			return $models->username;
 		}else{
 			return "none";
-		}	 
+		}
 	}
-	
+
 	protected function get_ruleid(){
-		$request = Yii::$app->request;				
+		$request = Yii::$app->request;
 		$models=Userlogin::find()->where("id='".$request->get("id")."' and auth_key='".$request->get("token")."'")->one();
 		if (count($models)!=0){
 			return $models->POSITION_LOGIN;
 		}else{
 			return "none";
-		}	 
+		}
 	}
-	
+
+	/*ACCESS*/
+	protected function get_accessid(){
+		$request = Yii::$app->request;
+		$models=Userlogin::find()->where("id='".$request->get("id")."' and auth_key='".$request->get("token")."'")->one();
+		if (count($models)!=0){
+			return $models->POSITION_ACCESS;
+		}else{
+			return "none";
+		}
+	}
 	protected function get_rulenm(){
-		$request = Yii::$app->request;				
+		$request = Yii::$app->request;
 		$models=Userlogin::find()->where("id='".$request->get("id")."' and auth_key='".$request->get("token")."'")->one();
 		if (count($models)!=0){
 			if ($models->POSITION_LOGIN==1){
@@ -173,15 +183,17 @@ class PasswordController extends ActiveController
 				return 'FACTORY_PABRIK';
 			}elseif($models->POSITION_LOGIN==6){
 				return 'OUTSOURCE';
+			}elseif($models->POSITION_LOGIN==7){
+				return 'MANAGER';
 			}else{
 				return 'none';
 			}
-			
+
 		}else{
 			return "none";
-		}	 
+		}
 	}
-	
+
 	protected function passwordCheck(){
 		 $hasil='{
 			"passwordvalidation":
@@ -191,14 +203,15 @@ class PasswordController extends ActiveController
 						"username":"'. $this->get_usernm() .'",
 						"rule_id":"'. $this->get_ruleid() .'",
 						"rule_nm":"'. $this->get_rulenm() .'",
-						"token":"'. $this->get_tokenp() .'"
+						"token":"'. $this->get_tokenp() .'",
+						"accessid":"'. $this->get_accessid() .'"
 					}
-					
+
 		 }';
-		
+
 		return Json::decode($hasil);
 	}
-	
+
 	/**
 	  * getUrl: http://api.lukisongroup.int/chart/pilotps?access-token=azLSTAYr7Y7TLsEAML-LsVq9cAXLyAWa&id_user=1&pilih=1
 	  * id_user=1 [user id login]
@@ -208,14 +221,14 @@ class PasswordController extends ActiveController
 	public function actionIndex()
      {
 		/*  $hasil='{'
-			.$this->userCheck().		
-		'}'; 		
-		
+			.$this->userCheck().
+		'}';
+
 		 $json_pilot = Json::decode($hasil); */
 		return $this->passwordCheck();
-			
+
      }
-	
+
 	 /*
 	 public function actionCreate()
      {
@@ -234,7 +247,7 @@ class PasswordController extends ActiveController
      {
          return $this->findModel($id);
      }
-	 
+
 	 protected function findModel($id)
      {
          $modelClass = $this->modelClass;
@@ -246,7 +259,7 @@ class PasswordController extends ActiveController
          }
 	}
 	*/
-	
+
 }
 
 

@@ -14,7 +14,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Detailkunjungan;
+use api\modules\master\models\Detailkunjunganx;
 use yii\web\HttpException;
 
 //use yii\data\ActiveDataProvider;
@@ -25,7 +25,7 @@ use yii\web\HttpException;
  */
 class DetailkunjunganController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Detailkunjungan';
+    public $modelClass = 'api\modules\master\models\Detailkunjunganx';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
 		'collectionEnvelope' => 'DetailKunjungan',

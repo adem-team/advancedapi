@@ -14,7 +14,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Productinventory;
+use api\modules\master\models\Configuration;
 use yii\web\HttpException;
 
 //use yii\data\ActiveDataProvider;
@@ -23,12 +23,12 @@ use yii\web\HttpException;
  *
  * @author -ptr.nov-
  */
-class ProductinventoryController extends ActiveController
+class ConfigurationController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Productinventory';
+    public $modelClass = 'api\modules\master\models\Configuration';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'ProductInventory',
+		'collectionEnvelope' => 'Configuration',
 	];
 	  
     public function behaviors()    
