@@ -14,7 +14,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Gambarkunjungan;
+use api\modules\master\models\Barangpenjualan;
 use yii\web\HttpException;
 
 //use yii\data\ActiveDataProvider;
@@ -23,12 +23,12 @@ use yii\web\HttpException;
  *
  * @author -ptr.nov-
  */
-class GambarkunjunganController extends ActiveController
+class BarangpenjualanController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Gambarkunjungan';
+    public $modelClass = 'api\modules\master\models\Barangpenjualan';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'Gambarkunjungan',
+		'collectionEnvelope' => 'BarangPenjualan',
 	];
 	  
     public function behaviors()    
