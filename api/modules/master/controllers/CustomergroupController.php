@@ -14,7 +14,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Configuration;
+use api\modules\master\models\Customergroup;
 use yii\web\HttpException;
 
 //use yii\data\ActiveDataProvider;
@@ -23,12 +23,12 @@ use yii\web\HttpException;
  *
  * @author -ptr.nov-
  */
-class ConfigurationController extends ActiveController
+class CustomergroupController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Configuration';
+    public $modelClass = 'api\modules\master\models\Customergroup';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'Configuration',
+		'collectionEnvelope' => 'Customergroup',
 	];
 	  
     public function behaviors()    

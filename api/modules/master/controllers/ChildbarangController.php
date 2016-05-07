@@ -61,7 +61,7 @@ class ChildbarangController extends ActiveController
             'cors' => [
                     // restrict access to
                     'Origin' =>['*'],// ['http://ptrnov-erp.dev', 'https://ptrnov-erp.dev'],
-                    'Access-Control-Request-Method' => ['GET','POST', 'PUT'],
+                    'Access-Control-Request-Method' => ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
                     // Allow only POST and PUT methods
                     'Access-Control-Request-Headers' => ['X-Wsse'],
                     // Allow only headers 'X-Wsse'
@@ -82,6 +82,7 @@ class ChildbarangController extends ActiveController
         return parent::beforeAction($action); 
     }
     
+    //http://stackoverflow.com/questions/25522462/yii2-rest-query
     public function actionSearch()
     {
         if (!empty($_GET)) 

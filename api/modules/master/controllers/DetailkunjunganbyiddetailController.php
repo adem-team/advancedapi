@@ -5,6 +5,8 @@ namespace api\modules\master\controllers;
 use yii;
 use yii\rest\ActiveController;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use common\models\User;
 use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
@@ -14,7 +16,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Configuration;
+use api\modules\master\models\Detailkunjunganx;
 use yii\web\HttpException;
 
 //use yii\data\ActiveDataProvider;
@@ -23,12 +25,12 @@ use yii\web\HttpException;
  *
  * @author -ptr.nov-
  */
-class ConfigurationController extends ActiveController
+class DetailkunjunganbyiddetailController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Configuration';
+    public $modelClass = 'api\modules\master\models\Detailkunjunganx';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'Configuration',
+		'collectionEnvelope' => 'DetailKunjungan',
 	];
 	  
     public function behaviors()    
@@ -63,7 +65,7 @@ class ConfigurationController extends ActiveController
                     'Origin' =>['*'],// ['http://ptrnov-erp.dev', 'https://ptrnov-erp.dev'],
                     'Access-Control-Request-Method' => ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
                     // Allow only POST and PUT methods
-                    'Access-Control-Request-Headers' => ['X-Wsse'],
+                    'Access-Control-Request-Headers' => ['x-requested-with', 'Content-Type', 'origin', 'authorization', 'accept', 'client-security-token'],
                     // Allow only headers 'X-Wsse'
                     'Access-Control-Allow-Credentials' => true,
                     // Allow OPTIONS caching
@@ -76,14 +78,17 @@ class ConfigurationController extends ActiveController
         ]);
     }
 
-    //http://stackoverflow.com/questions/25522462/yii2-rest-query
     public function actionSearch()
     {
+		
+        $iddetail        = $_GET['ID'];
+
         if (!empty($_GET)) 
         {
             $model = new $this->modelClass;
             foreach ($_GET as $key => $value) 
             {
+
                 if (!$model->hasAttribute($key)) 
                 {
                     throw new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
@@ -91,10 +96,19 @@ class ConfigurationController extends ActiveController
             }
             try 
             {
-                $provider = new ActiveDataProvider([
-                    'query' => $model->find()->where($_GET),
-                    'pagination' => false
-                ]);
+               $data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTUMER_VISIT_BY_ID_DETAIL_LIST('".$iddetail."')")->queryAll(); 
+                // $provider = new ActiveDataProvider([
+                    // 'query' => $model->find()->where($_GET),
+                    // 'pagination' => false
+                // ]);
+				
+				$provider= new ArrayDataProvider([
+				'allModels'=>$data_view,
+				 'pagination' => [
+					'pageSize' => 1000,
+					]
+				]);
+		
             } 
             catch (Exception $ex) 
             {

@@ -14,7 +14,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Configuration;
+use api\modules\master\models\Messageskunjungan;
 use yii\web\HttpException;
 
 //use yii\data\ActiveDataProvider;
@@ -23,12 +23,12 @@ use yii\web\HttpException;
  *
  * @author -ptr.nov-
  */
-class ConfigurationController extends ActiveController
+class MessageskunjunganController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Configuration';
+    public $modelClass = 'api\modules\master\models\Messageskunjungan';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'Configuration',
+		'collectionEnvelope' => 'Messageskunjungan',
 	];
 	  
     public function behaviors()    
@@ -61,7 +61,7 @@ class ConfigurationController extends ActiveController
             'cors' => [
                     // restrict access to
                     'Origin' =>['*'],// ['http://ptrnov-erp.dev', 'https://ptrnov-erp.dev'],
-                    'Access-Control-Request-Method' => ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+                    'Access-Control-Request-Method' => ['GET','POST', 'PUT'],
                     // Allow only POST and PUT methods
                     'Access-Control-Request-Headers' => ['X-Wsse'],
                     // Allow only headers 'X-Wsse'
@@ -76,7 +76,6 @@ class ConfigurationController extends ActiveController
         ]);
     }
 
-    //http://stackoverflow.com/questions/25522462/yii2-rest-query
     public function actionSearch()
     {
         if (!empty($_GET)) 

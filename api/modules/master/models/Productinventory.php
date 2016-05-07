@@ -55,7 +55,7 @@ class Productinventory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['TGL'], 'safe'],
+            [['TGL','WAKTU_INPUT_INVENTORY'], 'safe'],
             [['SO_QTY', 'UNIT_QTY', 'UNIT_BERAT', 'HARGA_PABRIK', 'HARGA_DIS', 'HARGA_SALES', 'HARGA_LG'], 'number'],
             [['SO_TYPE', 'STATUS'], 'integer'],
             [['NOTED'], 'string'],
@@ -94,6 +94,7 @@ class Productinventory extends \yii\db\ActiveRecord
             'NOTED' => 'Noted',
             'HARGA_LG' => 'Harga  Lg',
             'STATUS' => 'Status',
+            'WAKTU_INPUT_INVENTORY' => 'Waktu Input Inventory'
         ];
     }
 }

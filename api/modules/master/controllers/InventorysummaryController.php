@@ -5,6 +5,8 @@ namespace api\modules\master\controllers;
 use yii;
 use yii\rest\ActiveController;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use common\models\User;
 use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
@@ -14,7 +16,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Configuration;
+use api\modules\master\models\Productinventory;
 use yii\web\HttpException;
 
 //use yii\data\ActiveDataProvider;
@@ -23,12 +25,12 @@ use yii\web\HttpException;
  *
  * @author -ptr.nov-
  */
-class ConfigurationController extends ActiveController
+class InventorysummaryController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Configuration';
+    public $modelClass = 'api\modules\master\models\Productinventory';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'Configuration',
+		'collectionEnvelope' => 'InventorySummary',
 	];
 	  
     public function behaviors()    
@@ -76,14 +78,21 @@ class ConfigurationController extends ActiveController
         ]);
     }
 
-    //http://stackoverflow.com/questions/25522462/yii2-rest-query
     public function actionSearch()
     {
+		
+
+        $tgl        = $_GET['TGL'];
+        $custid     = $_GET['CUST_KD'];
+        $idsalesman = $_GET['USER_ID'];
+        
+        #'SUMMARY_CUST','2016-04-03','CUS.2016.000001','30',''
         if (!empty($_GET)) 
         {
             $model = new $this->modelClass;
             foreach ($_GET as $key => $value) 
             {
+
                 if (!$model->hasAttribute($key)) 
                 {
                     throw new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
@@ -91,10 +100,21 @@ class ConfigurationController extends ActiveController
             }
             try 
             {
-                $provider = new ActiveDataProvider([
-                    'query' => $model->find()->where($_GET),
-                    'pagination' => false
-                ]);
+               //'SUMMARY_CUST','2016-04-03','CUS.2016.000001','30','1'
+               //$data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_inventory_summary('".$iddetail."',)")->queryAll();
+               $data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_inventory_summary('SUMMARY_CUST','".$tgl."','".$custid."','".$idsalesman."','')")->queryAll();  
+                // $provider = new ActiveDataProvider([
+                    // 'query' => $model->find()->where($_GET),
+                    // 'pagination' => false
+                // ]);
+				
+				$provider= new ArrayDataProvider([
+				'allModels'=>$data_view,
+				 'pagination' => [
+					'pageSize' => 1000,
+					]
+				]);
+		
             } 
             catch (Exception $ex) 
             {

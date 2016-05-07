@@ -60,7 +60,7 @@ class CustomerController extends ActiveController
             'class' => \yii\filters\Cors::className(),
             'cors' => [
                     'Origin' =>['*'],// ['http://ptrnov-erp.dev', 'https://ptrnov-erp.dev'],
-                    'Access-Control-Request-Method' => ['GET','POST', 'PUT'],
+                    'Access-Control-Request-Method' => ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
                     'Access-Control-Request-Headers' => ['X-Wsse'],
                     'Access-Control-Allow-Credentials' => true,
                     'Access-Control-Max-Age' => 3600,
@@ -77,6 +77,7 @@ class CustomerController extends ActiveController
         return parent::beforeAction($action);
     }
 
+    //http://stackoverflow.com/questions/25522462/yii2-rest-query
     public function actionSearch()
     {
         if (!empty($_GET))

@@ -14,7 +14,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Configuration;
+use api\modules\master\models\Expiredprioritas;
 use yii\web\HttpException;
 
 //use yii\data\ActiveDataProvider;
@@ -23,12 +23,12 @@ use yii\web\HttpException;
  *
  * @author -ptr.nov-
  */
-class ConfigurationController extends ActiveController
+class ExpiredpriorityController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Configuration';
+    public $modelClass = 'api\modules\master\models\Expiredprioritas';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'Configuration',
+		'collectionEnvelope' => 'ExpiredPrioritas',
 	];
 	  
     public function behaviors()    
@@ -76,7 +76,6 @@ class ConfigurationController extends ActiveController
         ]);
     }
 
-    //http://stackoverflow.com/questions/25522462/yii2-rest-query
     public function actionSearch()
     {
         if (!empty($_GET)) 

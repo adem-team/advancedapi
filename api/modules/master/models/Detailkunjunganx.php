@@ -59,6 +59,10 @@ class Detailkunjunganx extends \yii\db\ActiveRecord
         ];
     }
 
+    public static function primaryKey()
+    {
+      return ['ID'];
+    }
     /**
      * @inheritdoc
      */
@@ -84,5 +88,22 @@ class Detailkunjunganx extends \yii\db\ActiveRecord
             'CHECKOUT_LAG' => 'Checkout  Lag',
             'CHECKOUT_TIME' => 'Checkout  Time',
         ];
+    }
+
+    public function getCustomers()
+    {
+        return $this->hasOne(Customer::className(), ['CUST_KD' => 'CUST_ID']);
+    }
+    
+    
+    public function getGroups()
+    {
+        return $this->hasOne(Customergroup::className(), ['ID' => 'SCDL_GROUP']);
+    }
+
+    public function extraFields()
+    {
+        return ['customers','groups'];
+        //return ['unit'];
     }
 }

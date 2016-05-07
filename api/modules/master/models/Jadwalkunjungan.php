@@ -70,4 +70,6 @@ class Jadwalkunjungan extends \yii\db\ActiveRecord
             'UPDATE_AT' => 'Update  At',
         ];
     }
+
+
 }

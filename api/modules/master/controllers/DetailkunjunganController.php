@@ -5,6 +5,8 @@ namespace api\modules\master\controllers;
 use yii;
 use yii\rest\ActiveController;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use common\models\User;
 use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
@@ -61,7 +63,7 @@ class DetailkunjunganController extends ActiveController
             'cors' => [
                     // restrict access to
                     'Origin' =>['*'],// ['http://ptrnov-erp.dev', 'https://ptrnov-erp.dev'],
-                    'Access-Control-Request-Method' => ['GET','POST', 'PUT'],
+                    'Access-Control-Request-Method' => ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
                     // Allow only POST and PUT methods
                     'Access-Control-Request-Headers' => ['X-Wsse'],
                     // Allow only headers 'X-Wsse'
@@ -78,11 +80,17 @@ class DetailkunjunganController extends ActiveController
 
     public function actionSearch()
     {
+		
+        $tgl        = $_GET['TGL'];
+        $userid     = $_GET['USER_ID'];
+        $schlgroup  = $_GET['SCDL_GROUP'];
+
         if (!empty($_GET)) 
         {
             $model = new $this->modelClass;
             foreach ($_GET as $key => $value) 
             {
+
                 if (!$model->hasAttribute($key)) 
                 {
                     throw new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
@@ -90,10 +98,19 @@ class DetailkunjunganController extends ActiveController
             }
             try 
             {
-                $provider = new ActiveDataProvider([
-                    'query' => $model->find()->where($_GET),
-                    'pagination' => false
-                ]);
+               $data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_inventory_list('".$tgl."','".$userid."','".$schlgroup."')")->queryAll(); 
+                // $provider = new ActiveDataProvider([
+                    // 'query' => $model->find()->where($_GET),
+                    // 'pagination' => false
+                // ]);
+				
+				$provider= new ArrayDataProvider([
+				'allModels'=>$data_view,
+				 'pagination' => [
+					'pageSize' => 1000,
+					]
+				]);
+		
             } 
             catch (Exception $ex) 
             {
