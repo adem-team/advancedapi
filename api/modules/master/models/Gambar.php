@@ -49,7 +49,7 @@ class Gambar extends \yii\db\ActiveRecord
             [['STATUS'], 'integer'],
             [['CREATE_AT', 'UPDATE_AT', 'TIME_END', 'TIME_START'], 'safe'],
             [['ID_DETAIL'], 'string', 'max' => 20],
-            [['IMG_NM_START', 'IMG_NM_END'], 'string', 'max' => 255],
+            [['IMG_NM_START', 'IMG_NM_END','CUSTOMER_ID'], 'string', 'max' => 255],
             [['CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 100]
         ];
     }
@@ -73,6 +73,7 @@ class Gambar extends \yii\db\ActiveRecord
             'IMG_NM_END' => 'Img  Nm  End',
             'TIME_END' => 'Time  End',
             'TIME_START' => 'Time  Start',
+            'CUSTOMER_ID' => 'Customer Id',
         ];
     }
 }

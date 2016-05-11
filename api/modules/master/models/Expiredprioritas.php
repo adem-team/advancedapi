@@ -39,7 +39,7 @@ class Expiredprioritas extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['STATUS', 'CREATE_BY', 'UPDATE_BY'], 'integer'],
+            [['STATUS', 'CREATE_BY', 'UPDATE_BY','JANGKA_WAKTU'], 'integer'],
             [['CREATE_AT', 'UPDATE_AT'], 'safe'],
             [['PRIORITAS_EXPIRED'], 'string', 'max' => 50]
         ];
@@ -58,6 +58,7 @@ class Expiredprioritas extends \yii\db\ActiveRecord
             'UPDATE_AT' => 'Update  At',
             'CREATE_BY' => 'Create  By',
             'UPDATE_BY' => 'Update  By',
+            'JANGKA_WAKTU' => 'Jangka Waktu'
         ];
     }
 }
