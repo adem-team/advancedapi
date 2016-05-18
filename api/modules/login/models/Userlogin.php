@@ -2,6 +2,7 @@
 
 namespace api\modules\login\models;
 use api\modules\login\models\Employe;
+use api\modules\login\models\Userprofile;
 use Yii;
 
 class Userlogin extends \yii\db\ActiveRecord
@@ -44,7 +45,14 @@ class Userlogin extends \yii\db\ActiveRecord
 			'avatarImage' => Yii::t('app', 'Avatar Image'),
         ];
     } 
+	
+	public function getProf()
+	{
+		return $this->hasOne(Userprofile::className(), ['ID' => 'id']);
+	}
+	
 	public function getEmp()
+	
 	{
 		return $this->hasOne(Employe::className(), ['EMP_ID' => 'EMP_ID']);
 	}

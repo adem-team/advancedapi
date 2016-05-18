@@ -167,6 +167,21 @@ class UserController extends ActiveController
 		return $request->get('username');		
 	} */
 	
+	/**
+     * Get Request Image Base64
+	 * @type GET
+     */
+	protected function get_gambar(){		
+		$request = Yii::$app->request;				
+		$models=Userlogin::find()->where("username='".$request->get("username")."'")->one();
+		$userImg = $models->prof;
+		if (count($userImg)!=0){
+			return $userImg->IMG_BASE64;
+		}else{
+			return "none";
+		}	 		
+	} 
+	
 	protected function userCheck(){
 		 $hasil='{
 			"uservalidation":
@@ -175,7 +190,8 @@ class UserController extends ActiveController
 						"username":"'. $this->get_username() .'",
 						"status": "'. $this->get_status() .'",
 						"token":"'. $this->get_token() .'",					
-						"site": "'. $this->get_site() .'"	
+						"site": "'. $this->get_site() .'",
+						"image64":"'. $this->get_gambar() .'"	
 					}
 					
 		 }';
