@@ -14,8 +14,10 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Productinventory;
+use api\modules\master\models\Detailkunjungan;
 use yii\web\HttpException;
+use yii\data\ArrayDataProvider;
+use yii\db\Query;
 
 //use yii\data\ActiveDataProvider;
 /**
@@ -23,12 +25,12 @@ use yii\web\HttpException;
  *
  * @author -ptr.nov-
  */
-class ProductinventoryController extends ActiveController
+class SalestrackController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Productinventory';
+    public $modelClass = 'api\modules\master\models\Detailkunjungan';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'ProductInventory',
+		'collectionEnvelope' => 'Sales Track',
 	];
 	  
     public function behaviors()    
@@ -78,41 +80,60 @@ class ProductinventoryController extends ActiveController
 
     public function actionSearch()
     {
-        if (!empty($_GET)) 
-        {
-            $model = new $this->modelClass;
+        
+
+        $tgl        = $_GET['TGL'];
+
+
+    
+        #'SUMMARY_ALL','2016-04-03','','30','1'
+        /* if (!empty($_GET)) 
+        { */
+           /*  $model = new $this->modelClass;
             foreach ($_GET as $key => $value) 
             {
+
                 if (!$model->hasAttribute($key)) 
                 {
-                    return new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
+                    throw new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
                 }
-            }
-            try 
-            {
-                $provider = new ActiveDataProvider([
-                    'query' => $model->find()->where($_GET),
-                    'pagination' => false
+            } */
+           /*  try 
+            { */
+               //'SUMMARY_CUST','2016-04-03','CUS.2016.000001','30','1'
+               //$data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_inventory_summary('".$iddetail."',)")->queryAll();
+               $data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_sales_track('".$tgl."')")->queryAll();  
+                // $provider = new ActiveDataProvider([
+                    // 'query' => $model->find()->where($_GET),
+                    // 'pagination' => false
+                // ]);
+                
+                $provider= new ArrayDataProvider([
+                'allModels'=>$data_view,
+                 'pagination' => [
+                    'pageSize' => 1000,
+                    ]
                 ]);
-            } 
-            catch (Exception $ex) 
+        
+           // } 
+           /*  catch (Exception $ex) 
             {
-                return new \yii\web\HttpException(500, 'Internal server error');
-            }
+                throw new \yii\web\HttpException(500, 'Internal server error');
+            } */
 
-            if ($provider->getCount() <= 0) 
+           /*  if ($provider->getCount() <= 0) 
             {
-                return new \yii\web\HttpException(404, 'No entries found with this query string');
+                throw new \yii\web\HttpException(404, 'No entries found with this query string');
             } 
             else 
-            {
+            { */
                 return $provider;
-            }
-        } 
-        else 
+           //}
+       // } 
+        /* else 
         {
-            return new \yii\web\HttpException(400, 'There are no query string');
-        }
+            throw new \yii\web\HttpException(400, 'There are no query string');
+        } */
     }
 }
 

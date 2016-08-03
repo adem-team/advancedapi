@@ -23,7 +23,7 @@ class Userlogin extends \yii\db\ActiveRecord
     {
         return [
             [['id','username','auth_key','password_hash'], 'required'],
-			[['username','auth_key','password_hash','password_reset_token','EMP_ID','POSITION_SITE'], 'string'],
+			[['username','auth_key','password_hash','password_reset_token','EMP_ID','POSITION_SITE','UUID'], 'string'],
             [['email','avatar','avatarImage'], 'string'],
 			[['id','status','created_at','updated_at'],'integer'],
         ];

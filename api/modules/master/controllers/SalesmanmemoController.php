@@ -5,6 +5,8 @@ namespace api\modules\master\controllers;
 use yii;
 use yii\rest\ActiveController;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use common\models\User;
 use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
@@ -81,44 +83,18 @@ class SalesmanmemoController extends ActiveController
         ]);
     }
 
+    #http://stackoverflow.com/questions/25522462/yii2-rest-query
     public function actionSearch()
     {
-        if (!empty($_GET)) 
-        {
-            $model = new $this->modelClass;
-            foreach ($_GET as $key => $value) 
-            {
-                if (!$model->hasAttribute($key)) 
-                {
-                    throw new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
-                }
-            }
-            try 
-            {
-                $provider = new ActiveDataProvider([
-                    'query' => $model->find()->where($_GET),
-                    'pagination' => false
-                ]);
-            } 
-            catch (Exception $ex) 
-            {
-                throw new \yii\web\HttpException(500, 'Internal server error');
-            }
+        // $tgl        = $_GET['TGL1'];
+        // $idgroup    = $_GET['SCDL_GROUP'];
 
-            if ($provider->getCount() <= 0) 
-            {
-                throw new \yii\web\HttpException(404, 'No entries found with this query string');
-            } 
-            else 
-            {
-                return $provider;
-            }
-        } 
-        else 
-        {
-            throw new \yii\web\HttpException(400, 'There are no query string');
-        }
+        $data_view=Yii::$app->db3->createCommand("CALL MOBILE_SALES_MEMO_gambar_user")->queryAll();  
+        $provider= new ArrayDataProvider(['allModels'=>$data_view,'pagination' => ['pageSize' => 1000,]]);
+
+        return $provider;
     }
+
 }
 
 

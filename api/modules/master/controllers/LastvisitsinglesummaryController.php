@@ -16,7 +16,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Jadwalkunjungan;
+use api\modules\master\models\Productinventory;
 use yii\web\HttpException;
 
 //use yii\data\ActiveDataProvider;
@@ -27,10 +27,10 @@ use yii\web\HttpException;
  */
 class LastvisitsinglesummaryController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Jadwalkunjungan';
+    public $modelClass = 'api\modules\master\models\Productinventory';
     public $serializer = [
         'class' => 'yii\rest\Serializer',
-        'collectionEnvelope' => 'Jadwalkunjungan',
+        'collectionEnvelope' => 'LVSummaryCustomer',
     ];
       
     public function behaviors()    
@@ -82,11 +82,11 @@ class LastvisitsinglesummaryController extends ActiveController
     public function actionSearch()
     {
         
+        $tglkunjungan           = $_GET['TGL'];
+        $cust_kd                = $_GET['CUST_KD'];
+        
 
-        $tgl        = $_GET['TGL1'];
-        $idgroup    = $_GET['SCDL_GROUP'];
-
-        $data_view=Yii::$app->db3->createCommand("CALL MOBILE_LAST_VISIT_summary_all('".$idgroup."','".$tgl."')")->queryAll();  
+        $data_view=Yii::$app->db3->createCommand("CALL MOBILE_LAST_VISIT_summary_customer('".$cust_kd."','".$tglkunjungan."')")->queryAll();  
         $provider= new ArrayDataProvider(['allModels'=>$data_view,'pagination' => ['pageSize' => 1000,]]);
 
         return $provider;

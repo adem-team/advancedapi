@@ -37,7 +37,7 @@ class StatuskunjunganprosedurController extends ActiveController
     {
         return ArrayHelper::merge(parent::behaviors(), 
         [
-            'authenticator' => 
+           /*  'authenticator' => 
             [
                 'class' => CompositeAuth::className(),
                 'authMethods' => 
@@ -46,8 +46,16 @@ class StatuskunjunganprosedurController extends ActiveController
                    // ['class' => HttpBearerAuth::className()],
                    // ['class' => QueryParamAuth::className(), 'tokenParam' => 'access-token'],
                 ]
-            ],
-
+            ], */
+			[
+				'class' => 'yii\filters\HttpCache',
+				'only' => ['index'],
+				'lastModified' => function ($action, $params) {
+					$q = new \yii\db\Query();
+					return $q->from('post')->max('updated_at');
+				},
+				 'cacheControlHeader' => 'public, max-age=1'
+			],
 			'bootstrap'=> 
             [
 				'class' => ContentNegotiator::className(),
@@ -69,7 +77,8 @@ class StatuskunjunganprosedurController extends ActiveController
                     // Allow only headers 'X-Wsse'
                     'Access-Control-Allow-Credentials' => true,
                     // Allow OPTIONS caching
-                    'Access-Control-Max-Age' => 3600,
+                    'Access-Control-Max-Age' => 0,
+					'Access-Control-Allow-Headers' => ['X-Requested-With','Content-Type'],
                     // Allow the X-Pagination-Current-Page header to be exposed to the browser.
                     //'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page'],
                     'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page','Content-Type, Authorization, Content-Length, X-Requested-With']
@@ -102,11 +111,33 @@ class StatuskunjunganprosedurController extends ActiveController
         #'30','2016-04-03','1'
         $iduser        = $_GET['USER_ID'];
         $tglplan       = $_GET['TGL'];
-        $groupcust     = $_GET['SCDL_GROUP'];
+        $groupcust     = $_GET['SCDL_GROUP'];		
+		
+		if (!empty($_GET)){
+			$provider= new ArrayDataProvider([
+				'allModels'=>Yii::$app->db3->createCommand("		
+							SELECT x1.ID,x1.TGL,x1.CUST_ID,x1.USER_ID,x1.SCDL_GROUP,x1.LAT,x1.LAG,x1.CHECKIN_TIME,x1.CHECKOUT_TIME,
+								x3.CUST_NM,x3.MAP_LAT,x3.MAP_LNG,
+								x2.CHECK_IN,x2.START_PIC,x2.INVENTORY_STOCK,x2.REQUEST,x2.END_PIC,x2.CHECK_OUT,x2.INVENTORY_SELLIN,
+								x2.INVENTORY_SELLOUT,x2.INVENTORY_EXPIRED
+							FROM c0002scdl_detail x1 LEFT JOIN c0009 x2 on x2.ID_DETAIL=x1.ID
+							LEFT JOIN c0001 x3 on x3.CUST_KD=x1.CUST_ID
+							WHERE x1.USER_ID='".$iduser."' AND x1.TGL='".$tglplan."' AND x1.SCDL_GROUP='".$groupcust."' 
+						")->queryAll(),
+				'pagination' => [
+				'pageSize' => 50,
+				]
+			]);
+	
+			return $provider;
+
+		}else {
+            return new \yii\web\HttpException(400, 'There are no query string');
+        }
 
 
-        
-        #'SUMMARY_ALL','2016-04-03','','30','1'
+
+	   #'SUMMARY_ALL','2016-04-03','','30','1'
         /* if (!empty($_GET)) 
         { */
            /*  $model = new $this->modelClass;
@@ -122,18 +153,33 @@ class StatuskunjunganprosedurController extends ActiveController
             { */
                //'SUMMARY_CUST','2016-04-03','CUS.2016.000001','30','1'
                //$data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_inventory_summary('".$iddetail."',)")->queryAll();
-               $data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_detail_status('".$iduser."','".$tglplan."','".$groupcust."')")->queryAll();  
+             // $data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_detail_status('".$iduser."','".$tglplan."','".$groupcust."')")->queryAll();  
+             // $data_view=Yii::$app->db3->createCommand("		
+						// SELECT x1.ID,x1.TGL,x1.CUST_ID,x1.USER_ID,x1.SCDL_GROUP,x1.LAT,x1.LAG,x1.CHECKIN_TIME,x1.CHECKOUT_TIME,
+							// x3.CUST_NM,x3.MAP_LAT,x3.MAP_LNG,
+							// x2.CHECK_IN,x2.START_PIC,x2.INVENTORY_STOCK,x2.REQUEST,x2.END_PIC,x2.CHECK_OUT,x2.INVENTORY_SELLIN,
+							// x2.INVENTORY_SELLOUT,x2.INVENTORY_EXPIRED
+						// FROM c0002scdl_detail x1 LEFT JOIN c0009 x2 on x2.ID_DETAIL=x1.ID
+						// LEFT JOIN c0001 x3 on x3.CUST_KD=x1.CUST_ID
+						// WHERE x1.USER_ID='".$iduser."' AND x1.TGL='".$tglplan."' AND x1.SCDL_GROUP='".$groupcust."' 
+					// ")->queryAll();  
                 // $provider = new ActiveDataProvider([
                     // 'query' => $model->find()->where($_GET),
                     // 'pagination' => false
                 // ]);
 				
-				$provider= new ArrayDataProvider([
-				'allModels'=>$data_view,
-				 'pagination' => [
-					'pageSize' => 1000,
-					]
-				]);
+				/*USE CECHED*/
+				/* $data_view=Yii::$app->db3->cache(function ($db3)use($iduser,$tglplan,$groupcust) {
+					return $db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_detail_status('".$iduser."','".$tglplan."','".$groupcust."')")->queryAll();
+				}, 60); */
+			
+			
+				// $provider= new ArrayDataProvider([
+				// 'allModels'=>$data_view,
+				 // 'pagination' => [
+					// 'pageSize' => 1000,
+					// ]
+				// ]);
 		
            // } 
            /*  catch (Exception $ex) 
@@ -147,13 +193,15 @@ class StatuskunjunganprosedurController extends ActiveController
             } 
             else 
             { */
-                return $provider;
+                // return $provider;
            //}
        // } 
         /* else 
         {
             throw new \yii\web\HttpException(400, 'There are no query string');
         } */
+		
+		
     }
 }
 

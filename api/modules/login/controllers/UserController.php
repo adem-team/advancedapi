@@ -70,6 +70,7 @@ class UserController extends ActiveController
 					'Access-Control-Request-Method' => ['POST', 'PUT','GET'],
 					// Allow only POST and PUT methods
 					'Access-Control-Request-Headers' => ['X-Wsse'],
+					'Access-Control-Allow-Headers' => ['X-Requested-With','Content-Type'],
 					// Allow only headers 'X-Wsse'
 					'Access-Control-Allow-Credentials' => true,
 					// Allow OPTIONS caching
@@ -183,20 +184,25 @@ class UserController extends ActiveController
 	} 
 	
 	protected function userCheck(){
-		 $hasil='{
-			"uservalidation":
-					{						
-						"id":"'. $this->get_userid() .'",
-						"username":"'. $this->get_username() .'",
-						"status": "'. $this->get_status() .'",
-						"token":"'. $this->get_token() .'",					
-						"site": "'. $this->get_site() .'",
-						"image64":"'. $this->get_gambar() .'"	
-					}
-					
-		 }';
+		if ($this->get_userid()!="none"){
+			 $hasil='{
+				"uservalidation":
+						{						
+							"id":"'. $this->get_userid() .'",
+							"username":"'. $this->get_username() .'",
+							"status": "'. $this->get_status() .'",
+							"token":"'. $this->get_token() .'",					
+							"site": "'. $this->get_site() .'",
+							"image64":"'. $this->get_gambar() .'"	
+						}
+						
+			 }';
+			 return Json::decode($hasil);
+		}else{
+			  return new \yii\web\HttpException(404, 'Internal server error');
+		}
 		
-		return Json::decode($hasil);
+		
 	}
 	
 	/**

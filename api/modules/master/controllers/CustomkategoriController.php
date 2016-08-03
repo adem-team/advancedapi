@@ -86,7 +86,7 @@ class CustomkategoriController extends ActiveController
             {
                 if (!$model->hasAttribute($key)) 
                 {
-                    throw new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
+                    return new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
                 }
             }
             try 
@@ -98,12 +98,12 @@ class CustomkategoriController extends ActiveController
             } 
             catch (Exception $ex) 
             {
-                throw new \yii\web\HttpException(500, 'Internal server error');
+                return new \yii\web\HttpException(500, 'Internal server error');
             }
 
             if ($provider->getCount() <= 0) 
             {
-                throw new \yii\web\HttpException(404, 'No entries found with this query string');
+                return new \yii\web\HttpException(404, 'No entries found with this query string');
             } 
             else 
             {
@@ -112,7 +112,7 @@ class CustomkategoriController extends ActiveController
         } 
         else 
         {
-            throw new \yii\web\HttpException(400, 'There are no query string');
+            return new \yii\web\HttpException(400, 'There are no query string');
         }
     }	
 	
@@ -313,12 +313,12 @@ class CustomkategoriController extends ActiveController
 
 
         //return \yii\helpers\Json::encode($dataProvider->getModels());//; //'azLSTAYr7Y7TLsEAMLLsVq9cAXLyAWa';
-           // throw new \HttpHeaderException();
+           // return new \HttpHeaderException();
         //else {
         //return 'admin';
         }
-            //throw new HttpException(404);
-        //throw new \yii\web\HttpException(400, 'Invalid attribute:' . $key);
+            //return new HttpException(404);
+        //return new \yii\web\HttpException(400, 'Invalid attribute:' . $key);
 
     }
     */
@@ -337,7 +337,7 @@ class CustomkategoriController extends ActiveController
         if ($id == Yii::$app->user->identity->username) {
             return User::findOne($id);
         }
-        throw new HttpException(404);
+        return new HttpException(404);
     }
     */
 

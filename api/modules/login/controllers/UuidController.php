@@ -1,6 +1,6 @@
 <?php
 
-namespace api\modules\master\controllers;
+namespace api\modules\login\controllers;
 
 use yii;
 use yii\rest\ActiveController;
@@ -14,21 +14,20 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Productinventory;
 use yii\web\HttpException;
-
+use api\modules\login\models\Userlogin;
 //use yii\data\ActiveDataProvider;
 /**
  * Country Controller API
  *
  * @author -ptr.nov-
  */
-class ProductinventoryController extends ActiveController
+class UuidController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Productinventory';
+    public $modelClass = 'api\modules\login\models\Userlogin';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'ProductInventory',
+		'collectionEnvelope' => 'user',
 	];
 	  
     public function behaviors()    
@@ -76,7 +75,27 @@ class ProductinventoryController extends ActiveController
         ]);
     }
 
-    public function actionSearch()
+
+    /**
+     * Update BY
+     *
+     * @author -ptr.nov-
+     */
+
+	// public function actions()
+	//  {
+	// 	$actions = parent::actions();
+	// 	unset( $actions['create'], $actions['delete']);
+	// 	 //unset($actions['update'], $actions['create'], $actions['delete'], $actions['view']);
+	// 	 return $actions;
+	//  }
+
+    /**
+     * Update BY
+     *
+     * @author -radumta_2005-
+     */
+     public function actionSearch()
     {
         if (!empty($_GET)) 
         {
@@ -113,7 +132,7 @@ class ProductinventoryController extends ActiveController
         {
             return new \yii\web\HttpException(400, 'There are no query string');
         }
-    }
+    }	
 }
 
 

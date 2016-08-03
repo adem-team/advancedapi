@@ -63,7 +63,9 @@ class SalesmanabsensiController extends ActiveController
                     'Origin' =>['*'],// ['http://ptrnov-erp.dev', 'https://ptrnov-erp.dev'],
                     'Access-Control-Request-Method' => ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
                     // Allow only POST and PUT methods
+                    //'Access-Control-Request-Headers' => ['X-Wsse','X-Requested-With','Content-Type'],
                     'Access-Control-Request-Headers' => ['X-Wsse'],
+					//'Access-Control-Allow-Headers' => ['X-Requested-With','Content-Type'],
                     // Allow only headers 'X-Wsse'
                     'Access-Control-Allow-Credentials' => true,
                     // Allow OPTIONS caching
@@ -85,7 +87,8 @@ class SalesmanabsensiController extends ActiveController
             {
                 if (!$model->hasAttribute($key)) 
                 {
-                    throw new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
+                    return new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
+					
                 }
             }
             try 
@@ -97,12 +100,12 @@ class SalesmanabsensiController extends ActiveController
             } 
             catch (Exception $ex) 
             {
-                throw new \yii\web\HttpException(500, 'Internal server error');
+                return new \yii\web\HttpException(500, 'Internal server error');
             }
 
             if ($provider->getCount() <= 0) 
             {
-                throw new \yii\web\HttpException(404, 'No entries found with this query string');
+                return new \yii\web\HttpException(404, 'No entries found with this query string');
             } 
             else 
             {
@@ -111,7 +114,7 @@ class SalesmanabsensiController extends ActiveController
         } 
         else 
         {
-            throw new \yii\web\HttpException(400, 'There are no query string');
+            return new \yii\web\HttpException(400, 'There are no query string');
         }
     }
 }

@@ -27,7 +27,7 @@ use yii\web\HttpException;
  */
 class LastvisitallsummaryController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Jadwalkunjungan';
+    public $modelClass = 'api\modules\master\models\Productinventory';
     public $serializer = [
         'class' => 'yii\rest\Serializer',
         'collectionEnvelope' => 'Jadwalkunjungan',
@@ -83,7 +83,7 @@ class LastvisitallsummaryController extends ActiveController
     {
         
 
-        $tgl        = $_GET['TGL1'];
+        $tgl        = $_GET['TGL'];
         $idgroup    = $_GET['SCDL_GROUP'];
 
         $data_view=Yii::$app->db3->createCommand("CALL MOBILE_LAST_VISIT_summary_all('".$idgroup."','".$tgl."')")->queryAll();  

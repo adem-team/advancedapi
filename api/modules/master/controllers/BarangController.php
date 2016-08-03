@@ -80,11 +80,11 @@ class BarangController extends ActiveController
         ]);
     }
 
-    public function beforeAction($action) 
+    /* public function beforeAction($action) 
     { 
         $this->enableCsrfValidation = false; 
         return parent::beforeAction($action); 
-    } 
+    }  */
 }
 
 

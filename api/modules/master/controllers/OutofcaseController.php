@@ -5,6 +5,8 @@ namespace api\modules\master\controllers;
 use yii;
 use yii\rest\ActiveController;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use common\models\User;
 use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
@@ -14,7 +16,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Productinventory;
+use api\modules\master\models\Detailkunjungan;
 use yii\web\HttpException;
 
 //use yii\data\ActiveDataProvider;
@@ -23,14 +25,14 @@ use yii\web\HttpException;
  *
  * @author -ptr.nov-
  */
-class ProductinventoryController extends ActiveController
+class OutofcaseController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Productinventory';
-	public $serializer = [
-		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'ProductInventory',
-	];
-	  
+    public $modelClass = 'api\modules\master\models\Detailkunjungan';
+    public $serializer = [
+        'class' => 'yii\rest\Serializer',
+        'collectionEnvelope' => 'OutOfCase',
+    ];
+      
     public function behaviors()    
     {
         return ArrayHelper::merge(parent::behaviors(), 
@@ -46,14 +48,14 @@ class ProductinventoryController extends ActiveController
                 ]
             ],
 
-			'bootstrap'=> 
+            'bootstrap'=> 
             [
-				'class' => ContentNegotiator::className(),
-				'formats' => 
+                'class' => ContentNegotiator::className(),
+                'formats' => 
                 [
-					'application/json' => Response::FORMAT_JSON,
-				],
-			],
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
             //'exceptionFilter' => [
             //    'class' => ErrorToExceptionFilter::className()            ],
             'corsFilter' => [
@@ -76,6 +78,7 @@ class ProductinventoryController extends ActiveController
         ]);
     }
 
+    //http://stackoverflow.com/questions/25522462/yii2-rest-query
     public function actionSearch()
     {
         if (!empty($_GET)) 

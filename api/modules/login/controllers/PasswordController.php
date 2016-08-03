@@ -72,6 +72,7 @@ class PasswordController extends ActiveController
 					'Access-Control-Request-Method' => ['POST', 'PUT','GET'],
 					// Allow only POST and PUT methods
 					'Access-Control-Request-Headers' => ['X-Wsse'],
+					'Access-Control-Allow-Headers' => ['X-Requested-With','content-type'],
 					// Allow only headers 'X-Wsse'
 					'Access-Control-Allow-Credentials' => true,
 					// Allow OPTIONS caching
@@ -167,6 +168,15 @@ class PasswordController extends ActiveController
 			return "none";
 		}
 	}
+	protected function get_uuid(){
+		$request = Yii::$app->request;
+		$models=Userlogin::find()->where("id='".$request->get("id")."' and auth_key='".$request->get("token")."'")->one();
+		if (count($models)!=0){
+			return $models->UUID;
+		}else{
+			return "none";
+		}
+	}
 	protected function get_rulenm(){
 		$request = Yii::$app->request;
 		$models=Userlogin::find()->where("id='".$request->get("id")."' and auth_key='".$request->get("token")."'")->one();
@@ -204,7 +214,8 @@ class PasswordController extends ActiveController
 						"rule_id":"'. $this->get_ruleid() .'",
 						"rule_nm":"'. $this->get_rulenm() .'",
 						"token":"'. $this->get_tokenp() .'",
-						"accessid":"'. $this->get_accessid() .'"
+						"accessid":"'. $this->get_accessid() .'",
+						"uuid":"'. $this->get_uuid() .'"
 					}
 
 		 }';

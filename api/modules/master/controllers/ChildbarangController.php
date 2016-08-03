@@ -92,7 +92,7 @@ class ChildbarangController extends ActiveController
             {
                 if (!$model->hasAttribute($key)) 
                 {
-                    throw new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
+                    return new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
                 }
             }
             try 
@@ -104,12 +104,12 @@ class ChildbarangController extends ActiveController
             } 
             catch (Exception $ex) 
             {
-                throw new \yii\web\HttpException(500, 'Internal server error');
+                return new \yii\web\HttpException(500, 'Internal server error');
             }
 
             if ($provider->getCount() <= 0) 
             {
-                throw new \yii\web\HttpException(404, 'No entries found with this query string');
+                return new \yii\web\HttpException(404, 'No entries found with this query string');
             } 
             else 
             {
@@ -118,7 +118,7 @@ class ChildbarangController extends ActiveController
         } 
         else 
         {
-            throw new \yii\web\HttpException(400, 'There are no query string');
+            return new \yii\web\HttpException(400, 'There are no query string');
         }
     }
     // public function actions()

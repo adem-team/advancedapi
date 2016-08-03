@@ -275,12 +275,12 @@ class KategoriController extends ActiveController
 
 
         //return \yii\helpers\Json::encode($dataProvider->getModels());//; //'azLSTAYr7Y7TLsEAMLLsVq9cAXLyAWa';
-           // throw new \HttpHeaderException();
+           // return new \HttpHeaderException();
         //else {
         //return 'admin';
         }
-            //throw new HttpException(404);
-        //throw new \yii\web\HttpException(400, 'Invalid attribute:' . $key);
+            //return new HttpException(404);
+        //return new \yii\web\HttpException(400, 'Invalid attribute:' . $key);
 
     }
     */
@@ -299,7 +299,7 @@ class KategoriController extends ActiveController
         if ($id == Yii::$app->user->identity->username) {
             return User::findOne($id);
         }
-        throw new HttpException(404);
+        return new HttpException(404);
     }
     */
 

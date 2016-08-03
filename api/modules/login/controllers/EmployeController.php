@@ -1,6 +1,6 @@
 <?php
 
-namespace api\modules\master\controllers;
+namespace api\modules\login\controllers;
 
 use yii;
 use yii\rest\ActiveController;
@@ -14,7 +14,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Productinventory;
+use api\modules\login\models\MiniEmploye;
 use yii\web\HttpException;
 
 //use yii\data\ActiveDataProvider;
@@ -23,12 +23,12 @@ use yii\web\HttpException;
  *
  * @author -ptr.nov-
  */
-class ProductinventoryController extends ActiveController
+class EmployeController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Productinventory';
+    public $modelClass = 'api\modules\login\models\MiniEmploye';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'ProductInventory',
+		'collectionEnvelope' => 'MiniEmploye',
 	];
 	  
     public function behaviors()    
@@ -76,6 +76,7 @@ class ProductinventoryController extends ActiveController
         ]);
     }
 
+    #http://stackoverflow.com/questions/25522462/yii2-rest-query
     public function actionSearch()
     {
         if (!empty($_GET)) 

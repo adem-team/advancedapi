@@ -54,7 +54,7 @@ class Detailkunjungan extends \yii\db\ActiveRecord
         return [
             [['USER_ID','CUST_ID','TGL', 'CREATE_AT', 'UPDATE_AT'],'required'],
             [['TGL', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
-            [['SCDL_GROUP', 'STATUS'], 'integer'],
+            [['SCDL_GROUP', 'STATUS','STATUS_CASE'], 'integer'],
             [['LAT', 'LAG', 'RADIUS'], 'number'],
             [['NOTE'], 'string'],
             [['CUST_ID', 'USER_ID'], 'string', 'max' => 50],
