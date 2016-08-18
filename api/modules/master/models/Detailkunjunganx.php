@@ -50,9 +50,10 @@ class Detailkunjunganx extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['TGL', 'CREATE_AT', 'UPDATE_AT', 'CHECKIN_TIME', 'CHECKOUT_TIME'], 'safe'],
-            [['SCDL_GROUP', 'STATUS'], 'integer'],
-            [['LAT', 'LAG', 'RADIUS', 'CHECKOUT_LAT', 'CHECKOUT_LAG'], 'number'],
+            [['TGL', 'CREATE_AT', 'UPDATE_AT', 'CHECKIN_TIME', 'CHECKOUT_TIME','STATUS','SCDL_GROUP'], 'safe'],
+            //[['STATUS'], 'integer'],
+            //[['LAT', 'LAG', 'RADIUS', 'CHECKOUT_LAT', 'CHECKOUT_LAG'], 'number'],
+            [['LAT', 'LAG', 'RADIUS', 'CHECKOUT_LAT', 'CHECKOUT_LAG'], 'safe'],
             [['NOTE'], 'string'],
             [['CUST_ID', 'USER_ID'], 'string', 'max' => 50],
             [['CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 100]

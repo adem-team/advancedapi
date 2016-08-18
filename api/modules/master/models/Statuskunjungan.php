@@ -47,7 +47,8 @@ class Statuskunjungan extends \yii\db\ActiveRecord
     {
         return [
             [['TGL'], 'safe'],
-            [['ID_DETAIL','CHECK_IN', 'START_PIC', 'INVENTORY_STOCK','INVENTORY_SELLIN','INVENTORY_SELLOUT','INVENTORY_EXPIRED','INVENTORY_RETURN', 'REQUEST', 'END_PIC', 'CHECK_OUT'], 'integer'],
+            //[['ID_DETAIL','CHECK_IN', 'START_PIC', 'INVENTORY_STOCK','INVENTORY_SELLIN','INVENTORY_SELLOUT','INVENTORY_EXPIRED','INVENTORY_RETURN', 'REQUEST', 'END_PIC', 'CHECK_OUT'], 'integer'],
+            [['ID_DETAIL','CHECK_IN', 'START_PIC', 'INVENTORY_STOCK','INVENTORY_SELLIN','INVENTORY_SELLOUT','INVENTORY_EXPIRED','INVENTORY_RETURN', 'REQUEST', 'END_PIC', 'CHECK_OUT'], 'safe'],
             [['USER_ID', 'CUST_ID'], 'string', 'max' => 50]
         ];
     }

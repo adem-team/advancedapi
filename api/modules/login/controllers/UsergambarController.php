@@ -1,6 +1,6 @@
 <?php
 
-namespace api\modules\master\controllers;
+namespace api\modules\login\controllers;
 
 use yii;
 use yii\rest\ActiveController;
@@ -14,8 +14,10 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Jadwalkunjungan;
+use api\modules\login\models\Userlogin;
 use yii\web\HttpException;
+use yii\data\ArrayDataProvider;
+use yii\db\Query;
 
 //use yii\data\ActiveDataProvider;
 /**
@@ -23,12 +25,12 @@ use yii\web\HttpException;
  *
  * @author -ptr.nov-
  */
-class JadwalkunjunganController extends ActiveController
+class UsergambarController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Jadwalkunjungan';
+    public $modelClass = 'api\modules\login\models\Userlogin';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'JadwalKunjungan',
+		'collectionEnvelope' => 'Usergambar',
 	];
 	  
     public function behaviors()    
@@ -67,7 +69,7 @@ class JadwalkunjunganController extends ActiveController
                     // Allow only headers 'X-Wsse'
                     'Access-Control-Allow-Credentials' => true,
                     // Allow OPTIONS caching
-                    'Access-Control-Max-Age' => 0,
+                    'Access-Control-Max-Age' => 3600,
                     // Allow the X-Pagination-Current-Page header to be exposed to the browser.
                     'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page'],
                 ],
@@ -76,43 +78,16 @@ class JadwalkunjunganController extends ActiveController
         ]);
     }
 
+
     public function actionSearch()
     {
-        if (!empty($_GET)) 
-        {
-            $model = new $this->modelClass;
-            foreach ($_GET as $key => $value) 
-            {
-                if (!$model->hasAttribute($key)) 
-                {
-                    return new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
-                }
-            }
-            try 
-            {
-                $provider = new ActiveDataProvider([
-                    'query' => $model->find()->where($_GET)->andWhere('STATUS!=3'),
-                    'pagination' => false
-                ]);
-            } 
-            catch (Exception $ex) 
-            {
-                return new \yii\web\HttpException(500, 'Internal server error');
-            }
+        // $tgl        = $_GET['TGL1'];
+        // $idgroup    = $_GET['SCDL_GROUP'];
 
-            if ($provider->getCount() <= 0) 
-            {
-                return new \yii\web\HttpException(404, 'No entries found with this query string');
-            } 
-            else 
-            {
-                return $provider;
-            }
-        } 
-        else 
-        {
-            return new \yii\web\HttpException(400, 'There are no query string');
-        }
+        $data_view=Yii::$app->db3->createCommand("CALL MOBILE_MANAGER_PROFILE_gambar_user")->queryAll();  
+        $provider= new ArrayDataProvider(['allModels'=>$data_view,'pagination' => ['pageSize' => 1000,]]);
+
+        return $provider;
     }
 }
 

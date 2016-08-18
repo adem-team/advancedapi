@@ -57,10 +57,10 @@ class Productinventory extends \yii\db\ActiveRecord
         return [
             [['TGL','WAKTU_INPUT_INVENTORY'], 'safe'],
             [['SO_QTY', 'UNIT_QTY', 'UNIT_BERAT', 'HARGA_PABRIK', 'HARGA_DIS', 'HARGA_SALES', 'HARGA_LG'], 'number'],
-            [['SO_TYPE', 'STATUS','ID_GROUP'], 'integer'],
+            [['SO_TYPE', 'STATUS'], 'integer'],
             [['NOTED'], 'string'],
             [['CUST_KD', 'CUST_KD_ALIAS', 'KD_BARANG', 'KD_DIS', 'USER_ID', 'UNIT_BARANG'], 'string', 'max' => 50],
-            [['CUST_NM', 'NM_BARANG', 'POS', 'NM_DIS'], 'string', 'max' => 255],
+            [['CUST_NM','ID_GROUP','NM_BARANG', 'POS', 'NM_DIS'], 'string', 'max' => 255],
             [['KD_BARANG_ALIAS'], 'string', 'max' => 30]
         ];
     }

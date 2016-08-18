@@ -58,8 +58,8 @@ class Userprofile extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [[ 'NM_FIRST', 'NM_MIDDLE', 'NM_END', 'KD_SRC'], 'required'],
-            [['ID', 'STS', 'STATUS'], 'integer'],
+            [['NM_FIRST', 'NM_MIDDLE', 'NM_END', 'KD_SRC'], 'required'],
+            [['ID_USER', 'STS', 'STATUS'], 'integer'],
             [['JOIN_DATE', 'RESIGN_DATE', 'TGL_LAHIR', 'CREATED_AT', 'UPDATED_TIME'], 'safe'],
             [['NM_FIRST', 'NM_MIDDLE', 'NM_END', 'EMP_IMG', 'KTP', 'TLP_HOME', 'HP'], 'string', 'max' => 20],
             [[ 'EMAIL', 'CREATED_BY', 'UPDATED_BY'], 'string', 'max' => 50],
@@ -75,7 +75,7 @@ class Userprofile extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'ID' => 'ID',
+            'ID_USER' => 'ID_USER',
             'NM_FIRST' => 'Nm  First',
             'NM_MIDDLE' => 'Nm  Middle',
             'NM_END' => 'Nm  End',

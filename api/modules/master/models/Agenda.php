@@ -47,8 +47,8 @@ class Agenda extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['TGL', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
-            [['SCDL_GROUP', 'STATUS'], 'integer'],
+            [['TGL', 'CREATE_AT', 'UPDATE_AT','SCDL_GROUP'], 'safe'],
+            [['STATUS'], 'integer'],
             [['LAT', 'LAG', 'RADIUS'], 'number'],
             [['NOTE'], 'string'],
             [['CUST_ID', 'USER_ID'], 'string', 'max' => 50],

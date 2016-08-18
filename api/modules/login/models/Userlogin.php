@@ -25,7 +25,7 @@ class Userlogin extends \yii\db\ActiveRecord
             [['id','username','auth_key','password_hash'], 'required'],
 			[['username','auth_key','password_hash','password_reset_token','EMP_ID','POSITION_SITE','UUID'], 'string'],
             [['email','avatar','avatarImage'], 'string'],
-			[['id','status','created_at','updated_at'],'integer'],
+			[['id','status','created_at','updated_at','POSITION_ACCESS'],'integer'],
         ];
     }
 
@@ -48,7 +48,7 @@ class Userlogin extends \yii\db\ActiveRecord
 	
 	public function getProf()
 	{
-		return $this->hasOne(Userprofile::className(), ['ID' => 'id']);
+		return $this->hasOne(Userprofile::className(), ['ID_USER' => 'id']);
 	}
 	
 	public function getEmp()

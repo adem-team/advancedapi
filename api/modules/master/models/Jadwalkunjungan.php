@@ -43,8 +43,8 @@ class Jadwalkunjungan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['TGL1', 'TGL2', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
-            [['SCDL_GROUP', 'STATUS'], 'integer'],
+            [['TGL1', 'TGL2', 'CREATE_AT', 'UPDATE_AT','SCDL_GROUP'], 'safe'],
+            [['STATUS'], 'integer'],
             [['NOTE'], 'string'],
             [['USER_ID'], 'string', 'max' => 50],
             [['CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 100]

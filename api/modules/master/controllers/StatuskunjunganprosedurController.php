@@ -122,7 +122,7 @@ class StatuskunjunganprosedurController extends ActiveController
 								x2.INVENTORY_SELLOUT,x2.INVENTORY_EXPIRED
 							FROM c0002scdl_detail x1 LEFT JOIN c0009 x2 on x2.ID_DETAIL=x1.ID
 							LEFT JOIN c0001 x3 on x3.CUST_KD=x1.CUST_ID
-							WHERE x1.USER_ID='".$iduser."' AND x1.TGL='".$tglplan."' AND x1.SCDL_GROUP='".$groupcust."' 
+							WHERE x1.STATUS<>3 AND x1.USER_ID='".$iduser."' AND x1.TGL='".$tglplan."' AND x1.SCDL_GROUP='".$groupcust."' 
 						")->queryAll(),
 				'pagination' => [
 				'pageSize' => 50,
