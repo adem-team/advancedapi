@@ -36,7 +36,7 @@ class Configuration extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['valueradius'], 'integer'],
+            [['valueradius','statusaktif'], 'integer'],
             [['checkin', 'note'], 'string', 'max' => 50]
         ];
     }
@@ -51,6 +51,7 @@ class Configuration extends \yii\db\ActiveRecord
             'checkin' => 'Checkin',
             'valueradius' => 'Valueradius',
             'note' => 'Note',
+            'statusaktif' => 'statusaktif',
         ];
     }
 }

@@ -61,7 +61,8 @@ class Barangpenjualan extends \yii\db\ActiveRecord
             [['STATUS', 'PARENT'], 'integer'],
             [['HARGA_SPL', 'HARGA_PABRIK', 'HARGA_LG', 'HARGA_DIST', 'HARGA_SALES'], 'number'],
             [['NOTE', 'BARCODE64BASE'], 'string'],
-            [['KD_CORP', 'KD_BARANG', 'KD_SUPPLIER', 'IMAGE', 'KD_CAB', 'KD_DEP'], 'string', 'max' => 50],
+            [['IMAGE'], 'safe'],
+            [['KD_CORP', 'KD_BARANG', 'KD_SUPPLIER', 'KD_CAB', 'KD_DEP'], 'string', 'max' => 50],
             [['KD_TYPE', 'KD_KATEGORI'], 'string', 'max' => 10],
             [['NM_BARANG', 'CREATED_BY', 'CREATED_AT', 'UPDATED_BY', 'UPDATED_AT', 'DATA_ALL'], 'string', 'max' => 255],
             [['KD_UNIT'], 'string', 'max' => 5]
