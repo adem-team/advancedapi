@@ -57,7 +57,8 @@ class Barangpenjualan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['KD_CORP', 'KD_BARANG', 'NM_BARANG', 'IMAGE', 'NOTE', 'KD_CAB', 'KD_DEP', 'BARCODE64BASE', 'CREATED_BY', 'CREATED_AT', 'UPDATED_BY', 'UPDATED_AT', 'DATA_ALL'], 'required'],
+            [['KD_CORP', 'KD_BARANG', 'NM_BARANG', 'IMAGE'], 'required'],
+            // [['KD_CORP', 'KD_BARANG', 'NM_BARANG', 'IMAGE', 'NOTE', 'KD_CAB', 'KD_DEP', 'BARCODE64BASE', 'CREATED_BY', 'CREATED_AT', 'UPDATED_BY', 'UPDATED_AT', 'DATA_ALL'], 'required'],
             [['STATUS', 'PARENT'], 'integer'],
             [['HARGA_SPL', 'HARGA_PABRIK', 'HARGA_LG', 'HARGA_DIST', 'HARGA_SALES'], 'number'],
             [['NOTE', 'BARCODE64BASE'], 'string'],
