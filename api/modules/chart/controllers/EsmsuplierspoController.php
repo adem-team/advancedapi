@@ -18,11 +18,6 @@ use yii\web\Response;
 
 use lukisongroup\dashboard\models\RptesmGraph;
 
-
-
-
-
-
 use yii\data\ActiveDataProvider;
 use common\models\User;
 use api\modules\sistem\models\UserloginSearch;
@@ -34,7 +29,7 @@ use yii\filters\auth\HttpBearerAuth;
 /**
  * DashboardController implements the CRUD actions for Dashboard model.
  */
-class RptesmchartsalesmdController extends ActiveController
+class EsmsuplierspoController extends ActiveController
 {
     public $modelClass = 'api\modules\chart\models\RptesmGraph';
     public function behaviors()    {
@@ -799,7 +794,7 @@ class RptesmchartsalesmdController extends ActiveController
 					(SELECT  DATE_FORMAT(x1.CREATE_AT,'%d-%m-%Y') as TGL, DATE_FORMAT(x1.CREATE_AT,'%d') as TGL_NO,
 									 month(x1.CREATE_AT) AS bulan,monthname(x1.CREATE_AT) as NmBulan,
 									x1.KD_PO,x2.KD_BARANG,x2.NM_BARANG,x2.NM_UNIT,
-									x2.QTY,x2.HARGA,(x2.QTY * x2.HARGA) as TTL
+									x2.QTY,x2.HARGA,(x2.QTY * (24 * x2.HARGA)) as TTL
 					FROM p0001 x1 INNER JOIN p0002 x2 on x2.KD_PO=x1.KD_PO
 					WHERE x1.KD_CORP='ESM' AND x1.KD_SUPPLIER='SPL.ESM.00001' AND x1.STATUS='102' 
 					ORDER BY x1.CREATE_AT) a1
@@ -1066,7 +1061,7 @@ class RptesmchartsalesmdController extends ActiveController
 		$_visitingSplPo= new ArrayDataProvider([
 			'allModels'=>Yii::$app->db_esm->createCommand("	
 				SELECT  DATE_FORMAT(x1.CREATE_AT,'%d-%m-%Y') as TGL, month(x1.CREATE_AT) AS bulan,DATE_FORMAT(x1.CREATE_AT,'%d') as TGL_NO,LEFT(COMPONEN_hari(x1.CREATE_AT),2) as hari,
-						x1.KD_PO,x2.KD_BARANG,x2.NM_BARANG,x2.NM_UNIT,x2.QTY,x2.HARGA,(x2.QTY * x2.HARGA) as TTL
+						x1.KD_PO,x2.KD_BARANG,x2.NM_BARANG,x2.NM_UNIT,x2.QTY,x2.HARGA,(x2.QTY * (24 * x2.HARGA)) as TTL
 				FROM p0001 x1 INNER JOIN p0002 x2 on x2.KD_PO=x1.KD_PO
 				WHERE x1.KD_CORP='ESM' AND x1.KD_SUPPLIER='SPL.ESM.00001' #AND x1.STATUS='102' 
 				ORDER BY x1.CREATE_AT
