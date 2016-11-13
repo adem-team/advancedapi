@@ -85,56 +85,24 @@ class SalestrackperuserController extends ActiveController
         $tgl        = $_GET['TGL'];
         $sales      = $_GET['USER_ID'];
 
+       // $data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_sales_track_per_user('".$tgl."','".$sales."')")->queryAll();  
 
-    
-        #'SUMMARY_ALL','2016-04-03','','30','1'
-        /* if (!empty($_GET)) 
-        { */
-           /*  $model = new $this->modelClass;
-            foreach ($_GET as $key => $value) 
-            {
+        $data_view    = Yii::$app->db3
+                                ->createCommand('SELECT A.ID AS ID_SCDLDETAIL,A.USER_ID,x3.NM_FIRST,x2.CUST_KD,x2.CUST_NM,A.CHECKIN_TIME,A.CHECKOUT_TIME FROM c0002scdl_detail A
+                                                    INNER JOIN c0001 x2 on A.CUST_ID = x2.CUST_KD
+                                                    INNER JOIN dbm_086.user_profile x3 on A.USER_ID = x3.ID_USER
+                                                    WHERE A.TGL= "'.$tgl.'" AND A.USER_ID = '.$sales.' AND A.STATUS <> 3')
+                                ->queryAll();
 
-                if (!$model->hasAttribute($key)) 
-                {
-                    throw new \yii\web\HttpException(404, 'Invalid attribute:' . $key);
-                }
-            } */
-           /*  try 
-            { */
-               //'SUMMARY_CUST','2016-04-03','CUS.2016.000001','30','1'
-               //$data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_inventory_summary('".$iddetail."',)")->queryAll();
-               $data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_sales_track_per_user('".$tgl."','".$sales."')")->queryAll();  
-                // $provider = new ActiveDataProvider([
-                    // 'query' => $model->find()->where($_GET),
-                    // 'pagination' => false
-                // ]);
-                
-                $provider= new ArrayDataProvider([
-                'allModels'=>$data_view,
-                 'pagination' => [
-                    'pageSize' => 1000,
-                    ]
-                ]);
-        
-           // } 
-           /*  catch (Exception $ex) 
-            {
-                throw new \yii\web\HttpException(500, 'Internal server error');
-            } */
+        $provider= new ArrayDataProvider([
+        'allModels'=>$data_view,
+         'pagination' => [
+            'pageSize' => 1000,
+            ]
+        ]);
 
-           /*  if ($provider->getCount() <= 0) 
-            {
-                throw new \yii\web\HttpException(404, 'No entries found with this query string');
-            } 
-            else 
-            { */
-                return $provider;
-           //}
-       // } 
-        /* else 
-        {
-            throw new \yii\web\HttpException(400, 'There are no query string');
-        } */
+        return $provider;
+
     }
 }
 

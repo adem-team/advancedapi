@@ -116,5 +116,6 @@ class mastercode extends Component
 
 	public function rupiah($angka){
 		return "Rp ".number_format($angka,0,',','.').' ,-';
-	}  
+	} 
+
 }

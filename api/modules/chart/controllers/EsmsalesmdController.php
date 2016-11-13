@@ -709,22 +709,32 @@ class EsmsalesmdController extends ActiveController
 		]);
 		$_modelVisitingNkaPo=ArrayHelper::toArray($_visitingNkaPo->getModels());
 		//
-		foreach($_modelVisitingNkaPo as $row => $value){			
+		foreach($_modelVisitingNkaPo as $row => $value)
+		{			
 			$hari[]=["label"=>$value['hari']."-".$value['TGL_NO']."-".$value['bulan']];	
-			if ($value['KD_BARANG']=='BRG.ESM.2016.01.0001'){
+			if ($value['KD_BARANG']=='BRG.ESM.2016.01.0001')
+			{
 				$NkaPoProduct1[]=["value"=>$value['NKA_PO']];	
-			}elseif($value['KD_BARANG']=='BRG.ESM.2016.01.0003'){
+			}
+			elseif($value['KD_BARANG']=='BRG.ESM.2016.01.0003')
+			{
 				$NkaPoProduct2[]=["value"=>$value['NKA_PO']];	
-			}elseif($value['KD_BARANG']=='BRG.ESM.2016.01.0004'){
+			}
+			elseif($value['KD_BARANG']=='BRG.ESM.2016.01.0004')
+			{
 				$NkaPoProduct3[]=["value"=>$value['NKA_PO']];	
-			}elseif($value['KD_BARANG']=='BRG.ESM.2016.01.0005'){
+			}
+			elseif($value['KD_BARANG']=='BRG.ESM.2016.01.0005')
+			{
 				$NkaPoProduct4[]=["value"=>$value['NKA_PO']];	
 			};		
 		};
 		//Grouping Array for CATEGORY CHART
 		$a='';
-		foreach($hari as $key => $value){
-			if($a!=$value['label']){
+		foreach($hari as $key => $value)
+		{
+			if($a!=$value['label'])
+			{
 				$hariCtg[]=["label"=>$value['label']];
 				$a=$value['label'];
 			}
