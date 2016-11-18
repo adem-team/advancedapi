@@ -96,7 +96,8 @@ class EsmsalesexpiredcustomerController extends ActiveController
         return array(
 						'ExpiredPerGeo'		=> $this->ExpiredPerGeo($query_date),
                         'ExpiredPerLayer'   => $this->ExpiredPerLayer($query_date),
-                        'TotalExpired'      => $this->TotalExpired($query_date)
+                        'TotalExpired'      => $this->TotalExpired($query_date),
+                        'ExpiredAllYear'    => $this->ExpiredAllYear($query_date)
 					);
 	} 
 
@@ -171,7 +172,7 @@ class EsmsalesexpiredcustomerController extends ActiveController
         $namabulan  = date('F Y', strtotime($query_date));
 
         $commandlayer    = Yii::$app->db3
-                                ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer WHERE layer.LAYER_ID != 5')
+                                ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer')
                                 ->queryAll();
 
         $commandproduct         = Yii::$app->db3
@@ -264,6 +265,70 @@ class EsmsalesexpiredcustomerController extends ActiveController
         $chart = Yii::$app->ambilkonci->objectToArray($FS);
 
         $result = array('chart'=>$chart,'data'=>$data);
+        return $result;
+    }
+
+    public function ExpiredAllYear($query_date)
+    {
+        
+        $f_date     = date('Y-m-01', strtotime($query_date));
+        $l_date     = date('Y-m-t', strtotime($query_date));
+        $xx  = date('Y', strtotime($query_date));
+
+
+        $commandproduct         = Yii::$app->db3
+                                ->createCommand('SELECT prod.KD_BARANG,prod.NM_BARANG,prod.KD_TYPE FROM dbc002.b0001 prod WHERE prod.KD_TYPE=01 AND prod.KD_KATEGORI=01')
+                                ->queryAll();
+
+        for($i=1;$i<=12;$i++)
+        {
+            $f_date     = date('Y-'.$i.'-01', strtotime($query_date));
+            $l_date     = date('Y-'.$i.'-t', strtotime($query_date));
+            $namabulan  = date('F', strtotime($f_date));
+            $category[] = array('label' => $namabulan);
+        }
+
+        foreach ($commandproduct as $key => $valueproduct) 
+        {
+            $KD_BARANG      = $valueproduct['KD_BARANG'];
+            $NM_BARANG      = $valueproduct['NM_BARANG'];
+
+            $data           = array();
+            for($i=1;$i<=12;$i++)
+            {
+                $f_date     = date('Y-'.$i.'-01', strtotime($query_date));
+                $l_date     = date('Y-'.$i.'-t', strtotime($query_date));
+                $namabulan  = date('F Y', strtotime($f_date));
+
+
+                $commandstock   = Yii::$app->db3
+                                ->createCommand('SELECT SUM(exp.QTY)AS TOTAL FROM dbc002.c0012 exp INNER JOIN (SELECT MAX(expired.ID)AS MAX_ID FROM dbc002.c0012 expired 
+                    INNER JOIN dbc002.c0001 cust on expired.CUST_ID = cust.CUST_KD 
+                    WHERE expired.BRG_ID = "'. $KD_BARANG. '" AND expired.DATE_EXPIRED >= "'.$f_date.'" AND expired.DATE_EXPIRED <= "'.$l_date.'" GROUP BY cust.CUST_NM ORDER BY cust.CUST_NM 
+                    )as R on exp.ID = R.MAX_ID')
+                                ->queryAll();
+
+                if($commandstock[0]['TOTAL'])
+                {
+                    $total = $commandstock[0]['TOTAL'];
+                }
+                else
+                {
+                    $total = 0;
+                }
+                $data[]     = array('value'=>$total);
+            }
+            $dataset[]  = array('seriesname'=>$NM_BARANG,'data'=>$data);
+        }
+
+        $categories[]   = array('category'=>$category);
+        $FS = new FusionChart();
+        $FS->setCaption('Expired All Year');
+        $FS->setSubCaption($xx);
+        $FS->setXAxisName('Month');
+        $FS->setLabelDisplay('rotate');
+        $chart = Yii::$app->ambilkonci->objectToArray($FS);
+        $result = array('chart'=>$chart,'categories'=>$categories,'dataset'=>$dataset);
         return $result;
     }
 }

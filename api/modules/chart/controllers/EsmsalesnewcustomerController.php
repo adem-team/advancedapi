@@ -109,7 +109,7 @@ class EsmsalesnewcustomerController extends ActiveController
                                 ->queryAll();
         
         $commandlayer    = Yii::$app->db3
-                                ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer WHERE layer.LAYER_ID != 5')
+                                ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer')
                                 ->queryAll();
 
         foreach ($commandgeo as $key => $valuegeo) 

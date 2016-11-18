@@ -164,7 +164,7 @@ class EsmsalesstockcustomerController extends ActiveController
     public function StockPerLayer()
     {
         $commandlayer    = Yii::$app->db3
-                                ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer WHERE layer.LAYER_ID != 5')
+                                ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer')
                                 ->queryAll();
 
         $commandproduct         = Yii::$app->db3

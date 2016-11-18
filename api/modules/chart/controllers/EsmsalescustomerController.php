@@ -79,7 +79,8 @@ class EsmsalescustomerController extends ActiveController
 		return array(
 						'Total_Layer'		=> $this->TotalLayer(),
 						'Total_Geo' 		=> $this->TotalGeo(),
-						'CombLayerGeo' 		=> $this->CombGeoLayer()
+						'CombLayerGeo' 		=> $this->CombGeoLayer(),
+                        'CustomerParent'    => $this->CustomerParent()
 					);
 	} 
 
@@ -93,7 +94,7 @@ class EsmsalescustomerController extends ActiveController
         	$GEO_ID 		= $valuegeo['GEO_ID'];
         	$GEO_NM 		= $valuegeo['GEO_NM'];
         	$commandgeo    	= Yii::$app->db3
-                                ->createCommand('SELECT cust.CUST_KD FROM dbc002.c0001 cust WHERE cust.GEO =' .$GEO_ID. ' AND cust.LAYER != 0')
+                                ->createCommand('SELECT cust.CUST_KD FROM dbc002.c0001 cust WHERE cust.STATUS <> 3 AND cust.GEO != 7 AND cust.GEO != 1 AND cust.GEO =' .$GEO_ID. ' ')
                                 ->queryAll();
             $jumlahgeo		= count($commandgeo);
         	$data[] 	    = array('label' => $GEO_NM,'value'=>$jumlahgeo);
@@ -111,14 +112,14 @@ class EsmsalescustomerController extends ActiveController
 	public function TotalLayer()
 	{
 		$commandlayer    = Yii::$app->db3
-                                ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer WHERE layer.LAYER_ID != 5')
+                                ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer')
                                 ->queryAll();
         foreach ($commandlayer as $key => $valuelayer) 
         {
         	$LAYER_ID 		= $valuelayer['LAYER_ID'];
         	$LAYER_NM 		= $valuelayer['LAYER_NM'];
         	$commandcust    = Yii::$app->db3
-                                ->createCommand('SELECT cust.CUST_KD FROM dbc002.c0001 cust WHERE cust.LAYER =' .$LAYER_ID.' AND cust.GEO != 7 AND cust.GEO != 1')
+                                ->createCommand('SELECT cust.CUST_KD FROM dbc002.c0001 cust WHERE cust.STATUS <> 3 AND cust.LAYER =' .$LAYER_ID.' AND cust.GEO != 7 AND cust.GEO != 1')
                                 ->queryAll();
             $jumlahlayer	= count($commandcust);
         	$data[] 		= array('label' => $LAYER_NM,'value'=>$jumlahlayer);
@@ -141,7 +142,7 @@ class EsmsalescustomerController extends ActiveController
                                 ->queryAll();
         
         $commandlayer    = Yii::$app->db3
-                                ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer WHERE layer.LAYER_ID != 5')
+                                ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer')
                                 ->queryAll();
 
         foreach ($commandgeo as $key => $valuegeo) 
@@ -158,7 +159,7 @@ class EsmsalescustomerController extends ActiveController
 	        {
 	        	$ID_GEO 	= $valuegeo['GEO_ID'];
 	        	$commandcust    = Yii::$app->db3
-                                ->createCommand('SELECT cust.CUST_KD FROM dbc002.c0001 cust WHERE cust.GEO =' .$ID_GEO. ' AND cust.LAYER='.$ID_LAYER)
+                                ->createCommand('SELECT cust.CUST_KD FROM dbc002.c0001 cust WHERE  cust.STATUS <> 3 AND cust.GEO != 7 AND cust.GEO != 1 AND cust.GEO =' .$ID_GEO. ' AND cust.LAYER='.$ID_LAYER)
                                 ->queryAll();
                 $jumlah		= count($commandcust);
                 $data[]     = array('value'=>$jumlah);
@@ -175,6 +176,28 @@ class EsmsalescustomerController extends ActiveController
 		$result = array('chart'=>$chart,'categories'=>$categories,'dataset'=>$dataset);
 		return $result;
 	}
+
+    public function CustomerParent()
+    {
+        
+        $customerparent    = Yii::$app->db3
+                                ->createCommand('SELECT master.CUST_NM as label,C.value as value FROM dbc002.c0001 master 
+                                    INNER JOIN 
+                                    (SELECT a.CUST_GRP,SUM(a.STATUS)-1 as VALUE FROM dbc002.c0001 a  
+                                        WHERE a.STATUS <> 3  AND a.GEO != 7 AND a.GEO != 1 GROUP BY a.CUST_GRP ORDER BY VALUE ASC
+                                    )C 
+                                    ON master.CUST_KD = C.CUST_GRP WHERE master.CUST_GRP = master.CUST_KD')
+                                ->queryAll();
+        $data = $customerparent;
+
+        $FS = new FusionChart();
+        $FS->setCaption('Customer Parent');
+        $FS->setXAxisName('Parent');
+        $chart = Yii::$app->ambilkonci->objectToArray($FS);
+
+        $result = array('chart'=>$chart,'data'=>$data);
+        return $result;
+    }
 
 }
 
