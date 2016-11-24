@@ -75,6 +75,34 @@ class CustomerberkasController extends ActiveController
         $this->enableCsrfValidation = false;
         return parent::beforeAction($action);
     }
+    public function actions()
+    {
+        $actions = parent::actions();
+        unset($actions['index']);
+        return $actions;
+    }
+
+    public function actionIndex()
+    {
+        if (!empty($_GET)) 
+        {
+            $params         = $_GET['CUST_KD'];
+            $commandgeo     = Yii::$app->db3
+                            ->createCommand('SELECT ID,CUST_KD,DCRIPT FROM dbc002.c0001_Img WHERE CUST_KD = "'.$params.'"    ')
+                            ->queryAll();
+        }
+        else
+        {
+            $commandgeo     = Yii::$app->db3
+                                ->createCommand('SELECT * FROM dbc002.c0001_Img')
+                                ->queryAll();
+        }
+
+        
+
+        return array('CustomerBerkas'=>$commandgeo);
+    }
+
 
     //http://stackoverflow.com/questions/25522462/yii2-rest-query
     public function actionSearch()
@@ -91,10 +119,7 @@ class CustomerberkasController extends ActiveController
             }
             try
             {
-                $provider = new ActiveDataProvider([
-                    'query' => $model->find()->where($_GET),
-                    'pagination' => false
-                ]);
+                $provider = new ActiveDataProvider(['query' => $model->find()->where($_GET),'pagination' => false]);
             }
             catch (Exception $ex)
             {
@@ -115,27 +140,5 @@ class CustomerberkasController extends ActiveController
             return new \yii\web\HttpException(400, 'There are no query string');
         }
     }
-    // public function actions()
-    //  {
-    //     $actions = parent::actions();
-    //     unset($actions['index'], $actions['update'], $actions['create'], $actions['delete'], $actions['view']);
-    //     return $actions;
-    //  }
-    //
-    // public function actionIndex()
-    // {
-    //     $results = $this->getCustomers();
-    //     // foreach($results as $key)
-    //     // {
-    //     //    echo $key->CUST_KD ."</br>";
-    //     //    echo $key->EMAIL ."</br>";
-    //     // }
-    //     return array('Customer'=>$results);
-    //
-    // }
-    //
-    // public function getCustomers()
-    // {
-    //   return $models=Customer::find()->All();
-    // }
+
 }

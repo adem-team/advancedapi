@@ -15,8 +15,9 @@ class Customer extends \yii\db\ActiveRecord
 
     public function __construct()
     {
-        $this->CREATED_AT = date('Y-m-d H:i:s');
-        $this->UPDATED_AT = date('Y-m-d H:i:s');
+        $this->CREATED_AT   = date('Y-m-d H:i:s');
+        $this->UPDATED_AT   = date('Y-m-d H:i:s');
+        $this->LAYER        = 5;
     }
     
 	public static function getDb()
@@ -38,10 +39,10 @@ class Customer extends \yii\db\ActiveRecord
         return [
             [['CUST_KD','CUST_NM','STT_TOKO'], 'required'],
             [['CUST_NM','JOIN_DATE','STT_TOKO'], 'required'],
-            [['CUST_KTG', 'TLP1', 'TLP2', 'FAX', 'STT_TOKO', 'STATUS'], 'integer'],
+            [['CUST_KTG', 'TLP2', 'FAX', 'STT_TOKO', 'STATUS','LAYER'], 'integer'],
             [['JOIN_DATE', 'CREATED_AT', 'UPDATED_AT'], 'safe'],
-            [['ALAMAT', 'NOTE'], 'string'],
-            [['CUST_KD', 'CUST_KD_ALIAS', 'CUST_GRP', 'MAP_LAT', 'MAP_LNG', 'NPWP','KD_DISTRIBUTOR','PROVINCE_ID','CITY_ID'], 'string', 'max' => 50],
+            [['ALAMAT', 'ALAMAT_KIRIM','NOTE'], 'string'],
+            [['CUST_KD', 'CUST_KD_ALIAS', 'CUST_GRP', 'MAP_LAT','MAP_LNG','TLP1','NPWP','KD_DISTRIBUTOR','PROVINCE_ID','CITY_ID'], 'string', 'max' => 50],
             [['CUST_NM', 'PIC', 'EMAIL', 'WEBSITE', 'DATA_ALL'], 'string', 'max' => 255],
             [['CAB_ID', 'CORP_ID'], 'string', 'max' => 6],
             [['KTP'], 'string', 'max' => 100],

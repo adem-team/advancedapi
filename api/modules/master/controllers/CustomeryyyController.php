@@ -24,7 +24,7 @@ use yii\web\HttpException;
  *
  * @author -ptr.nov-
  */
-class CustomerController extends ActiveController
+class CustomeryyyController extends ActiveController
 {
     public $modelClass = 'api\modules\master\models\Customer';
     public $serializer = [
@@ -117,11 +117,11 @@ class CustomerController extends ActiveController
         }
     }
     public function actions()
-    {
+     {
         $actions = parent::actions();
         unset($actions['create']);
         return $actions;
-    }
+     }
     
     public function actionCreate()
     {
@@ -134,17 +134,20 @@ class CustomerController extends ActiveController
         $CUST_KD = Yii::$app->ambilkonci->getCustomerKode($lastcustomer['CUST_KD']);
 
         
-        $model              = new Customer();
+        $model  = new Customer();
         $model->CUST_KD     = $CUST_KD;
-        $model->attributes  = $params;
+        $model->attributes=$params;
 
         if ($model->save()) 
         {
+
             return $model->attributes;
+
         } 
         else
         {
             return array('errors'=>$model->errors);
         }
     }
+
 }
