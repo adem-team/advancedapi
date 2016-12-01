@@ -33,7 +33,7 @@ use api\modules\chart\models\Rpt001;
   * @link http://api.lukisongroup.int/chart/hrmpersonalias
   * @see https://github.com/C12D/advanced/blob/master/api/modules/chart/controllers/PilotpController.php
  */
-class EsmsalescontrolController extends ActiveController
+class EsmsaleskpiController extends ActiveController
 {	
 	/**
 	  * Source Database declaration 
@@ -101,69 +101,85 @@ class EsmsalescontrolController extends ActiveController
 		if (!empty($_GET)) 
         {
             $query_date = $_GET['MONTH'];
+            $tanggal 	= Yii::$app->ambilkonci->getDayStartAndEnd($query_date);
+            $user_id 	= $_GET['USER_ID'];
         }
         else
         {
             $query_date = date('Y-m-d');
+            $tanggal 	= Yii::$app->ambilkonci->getDayStartAndEnd($query_date);
+            $user_id 	= 61;
         }
-        $data[] = array(
-        					'AC'		=> $this->CustomerCall($query_date),
-        					'EC'		=> $this->EffectiveCall(9,$query_date),
-        					'SC'		=> $this->EffectiveCall(10,$query_date)
-        				);
-		$data[] = array(
-							'NOO'		=> $this->NOO($query_date,15),
-							// 'RO'		=> $this->NOO($query_date,50),
-							// 'SO'		=> $this->NOO($query_date,50),
+        $data = array(
+        					'AC'		=> $this->CustomerCall($tanggal,$user_id),
+        					'EC'		=> $this->EffectiveCall(9,$tanggal,$user_id),
+        					'SC'		=> $this->EffectiveCall(10,$tanggal,$user_id),
+							'NOO'		=> $this->NOO($tanggal,15,$user_id)
 						);
 		return $data;
 	}
 
- 	protected function CustomerCall($query_date) 
+ 	protected function CustomerCall($query_date,$user_id) 
 	{
-		$f_date = $query_date;
+		$f_date 	= $query_date[0];
+		$l_date 	= $query_date[1];
+		$user_id 	= $user_id;
+
 		$commandgeo    = Yii::$app->db3
-                                ->createCommand('   SELECT scdl.CUST_ID,
-													SUM(CASE WHEN (scdl.STATUS=1) THEN 1 ELSE 0 END) AS AC,
-													COUNT(scdl.CUST_ID) AS TOTCALL 
+                                ->createCommand('
+                                					SELECT scdl.CUST_ID,
+													SUM(CASE WHEN (scdl.STATUS=1) THEN 1 END) AS AC
 													FROM dbc002.c0002scdl_detail scdl 
-													WHERE scdl.STATUS <> 3 AND scdl.TGL = "'.$f_date.'"
+													WHERE scdl.STATUS <> 3 AND scdl.TGL >= "'.$f_date.'" AND scdl.TGL <= "'.$l_date.'"
+													AND scdl.USER_ID = '.$user_id.'
 												')
                              	->queryOne();
-        $result = $commandgeo['AC'].'/'.$commandgeo['TOTCALL'];                     	
+        $result = $commandgeo['AC'];
+        if(!$result)
+        {
+        	$result = 0;
+        }                     	
      	return $result;
 	}
 
-	protected function EffectiveCall($type,$query_date) 
+	protected function EffectiveCall($type,$query_date,$user_id) 
 	{
-		$type 	= $type;
-		$f_date = $query_date;
+		$type 		= $type;
+		$f_date 	= $query_date[0];
+		$l_date 	= $query_date[1];
+		$user_id 	= $user_id;
 		$commandgeo    = Yii::$app->db3
                                 ->createCommand('
-                                					SELECT count(B.CUST_KD)AS JUMLAH,count(cust.CUST_ID)AS TOTAL FROM c0002scdl_detail cust
-													LEFT JOIN
-														(SELECT sale.CUST_KD FROM so_t2 sale WHERE sale.SO_TYPE = '.$type.' AND sale.TGL = "'.$f_date.'" GROUP BY sale.CUST_KD)B
-													 ON 
-													cust.CUST_ID = B.CUST_KD WHERE cust.TGL = "'.$f_date.'" AND cust.STATUS <> 3
+													SELECT sale.CUST_KD FROM so_t2 sale WHERE sale.SO_TYPE = '.$type.' 
+													AND sale.TGL >= "'.$f_date.'" 
+													AND sale.TGL <= "'.$l_date.'"
+													AND sale.USER_ID = '.$user_id.'
+												 	GROUP BY sale.CUST_KD
 												')
-                             	->queryOne();
-        $result = $commandgeo['JUMLAH'].'/'.$commandgeo['TOTAL'];                     	
+                             	->queryAll();
+        $result = count($commandgeo);                     	
      	return $result;
 	}
 
-	protected function NOO($query_date,$target) 
+	protected function NOO($query_date,$target,$user_id) 
 	{
-		$f_date = $query_date;
-		$target = $target;
-		$parent = 'CUS.2016.000637';
+		$f_date 	= $query_date[0];
+		$l_date 	= $query_date[1];
+		$user_id 	= $user_id;
+		$target 	= $target;
+		$parent 	= 'CUS.2016.000637';
 		$commandgeo    = Yii::$app->db3
                                 ->createCommand('
-                                					SELECT COUNT(cust.CUST_KD)as JUMLAH FROM c0001 cust 
-                                					WHERE cust.CUST_GRP = "'.$parent.'" AND 
-                                					cust.JOIN_DATE = "'.$f_date.'"
+                                					SELECT COUNT(cust.CUST_KD)as JUMLAH FROM c0001 cust
+                                					INNER JOIN dbm001.user users 
+													ON cust.CREATED_BY = users.username 
+													WHERE cust.CUST_GRP = "'.$parent.'" 
+													AND cust.JOIN_DATE >= "'.$f_date.'" 
+													AND cust.JOIN_DATE <= "'.$l_date.'"
+													AND users.id = '.$user_id.'
 												')
                              	->queryOne();
-        $result = $commandgeo['JUMLAH'].'/'.$target;                     	
+        $result = $commandgeo['JUMLAH'];                     	
      	return $result;
 	}
 }

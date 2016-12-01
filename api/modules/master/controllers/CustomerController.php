@@ -133,13 +133,13 @@ class CustomerController extends ActiveController
 
         $CUST_KD = Yii::$app->ambilkonci->getCustomerKode($lastcustomer['CUST_KD']);
 
-        
         $model              = new Customer();
-        $model->CUST_KD     = $CUST_KD;
         $model->attributes  = $params;
-
+        $model->CUST_KD     = $CUST_KD;
+        
         if ($model->save()) 
         {
+            $response   = Yii::$app->ambilkonci->sendMessage('NOO',$model->attributes);
             return $model->attributes;
         } 
         else
@@ -147,4 +147,7 @@ class CustomerController extends ActiveController
             return array('errors'=>$model->errors);
         }
     }
+
+    
+         
 }

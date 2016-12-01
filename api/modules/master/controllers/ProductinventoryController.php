@@ -114,6 +114,30 @@ class ProductinventoryController extends ActiveController
             return new \yii\web\HttpException(400, 'There are no query string');
         }
     }
+
+    public function actions()
+    {
+        $actions = parent::actions();
+        unset($actions['create']);
+        return $actions;
+    }
+
+    public function actionCreate()
+    {
+        $params = $_REQUEST;
+        $model              = new Productinventory();
+        $model->attributes  = $params;
+
+        if ($model->save()) 
+        {
+            $response   = Yii::$app->ambilkonci->sendMessage('RO',$model->attributes);
+            return $model->attributes;
+        } 
+        else
+        {
+            return array('errors'=>$model->errors);
+        }
+    }
 }
 
 

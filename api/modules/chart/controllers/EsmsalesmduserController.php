@@ -100,11 +100,12 @@ class EsmsalesmduserController extends ActiveController
     {
         if (!empty($_GET))
         {
-        	$TGL 		= $_GET['TGL'];
+        	$TGLSTART   = $_GET['TGLSTART'];
+            $TGLEND     = $_GET['TGLEND'];
         	$USER_ID 	= $_GET['USER_ID'];
-        	$f_date     = date('Y-m-01', strtotime($TGL));
-	        $l_date     = date('Y-m-t', strtotime($TGL));
-	        $namabulan  = date('F Y', strtotime($TGL));
+        	$f_date     = date('Y-m-d', strtotime($TGLSTART));
+	        $l_date     = date('Y-m-d', strtotime($TGLEND));
+	        $namabulan  = date('F Y', strtotime($TGLSTART));
 
         	$data_view=Yii::$app->db_emp
 						        ->createCommand('SELECT SUM(CASE WHEN scdldetail.STATUS = 1 THEN 1 ELSE 0 END)AS CC,SUM(CASE WHEN scdldetail.STATUS = 0 THEN 1 ELSE 0 END)AS NC,scdldetail.ID,scdldetail.TGL,scdldetail.CUST_ID FROM dbc002.c0002scdl_detail scdldetail 
@@ -137,10 +138,10 @@ class EsmsalesmduserController extends ActiveController
 
 
 	        $result = array('chart'=>$chart,'categories'=>$categories,'dataset'=>$dataset);
-	        $resulteffectivecall = $this->EffectiveCall($TGL,$USER_ID);
-	        $resultNewCustomer	 = $this->NewCustomer($TGL);
-            $JumlahKunjunganLayerA  = $this->JumlahKunjunganLayerA($TGL,$USER_ID);
-            $JumlahKunjunganLayerB  = $this->JumlahKunjunganLayerB($TGL,$USER_ID);
+	        $resulteffectivecall = $this->EffectiveCall($TGLSTART,$TGLEND,$USER_ID);
+	        $resultNewCustomer	 = $this->NewCustomer($TGLSTART,$TGLEND);
+            $JumlahKunjunganLayerA  = $this->JumlahKunjunganLayerA($TGLSTART,$TGLEND,$USER_ID);
+            $JumlahKunjunganLayerB  = $this->JumlahKunjunganLayerB($TGLSTART,$TGLEND,$USER_ID);
 	        return array(
                             'CustomerCall'=>$result,
                             'EffectiveCall'=>$resulteffectivecall,
@@ -152,12 +153,12 @@ class EsmsalesmduserController extends ActiveController
         }
     } 
 
-	public function EffectiveCall($query_date,$USER_ID)
+	public function EffectiveCall($TGLSTART,$TGLEND,$USER_ID)
     {
         $USER_ID	= $USER_ID;
-        $f_date     = date('Y-m-01', strtotime($query_date));
-        $l_date     = date('Y-m-t', strtotime($query_date));
-        $namabulan  = date('F Y', strtotime($query_date));
+        $f_date     = date('Y-m-d', strtotime($TGLSTART));
+        $l_date     = date('Y-m-d', strtotime($TGLEND));
+        $namabulan  = date('F Y', strtotime($TGLSTART));
 
         $commandlayer    = Yii::$app->db3
                                 ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer WHERE layer.LAYER_ID != 5')
@@ -216,14 +217,14 @@ class EsmsalesmduserController extends ActiveController
         return $result;
     }
 
-    public function NewCustomer($query_date)
+    public function NewCustomer($TGLSTART,$TGLEND)
 	{
 		
 
-        $f_date     = date('Y-m-01', strtotime($query_date));
-        $l_date     = date('Y-m-t', strtotime($query_date));
+        $f_date     = date('Y-m-01', strtotime($TGLSTART));
+        $l_date     = date('Y-m-t', strtotime($TGLEND));
 
-        $namabulan  = date('F Y', strtotime($query_date));
+        $namabulan  = date('F Y', strtotime($TGLSTART));
 
         $commandgeo    = Yii::$app->db3
                                 ->createCommand('SELECT geo.GEO_ID,geo.GEO_NM FROM dbc002.c0002scdl_geo geo WHERE geo.GEO_ID != 1 AND geo.GEO_ID != 7')
@@ -266,14 +267,14 @@ class EsmsalesmduserController extends ActiveController
 		return $result;
 	}
 
-    public function JumlahKunjunganLayerA($query_date,$USER_ID)
+    public function JumlahKunjunganLayerA($TGLSTART,$TGLEND,$USER_ID)
     {
         
         $USER_ID    = $USER_ID;
-        $f_date     = date('Y-m-01', strtotime($query_date));
-        $l_date     = date('Y-m-t', strtotime($query_date));
+        $f_date     = date('Y-m-01', strtotime($TGLSTART));
+        $l_date     = date('Y-m-t', strtotime($TGLEND));
 
-        $namabulan  = date('F Y', strtotime($query_date));
+        $namabulan  = date('F Y', strtotime($TGLSTART));
         
         $commandlayer    = Yii::$app->db3
                                 ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer WHERE layer.LAYER_ID != 5')
@@ -305,14 +306,14 @@ class EsmsalesmduserController extends ActiveController
         $result = array('chart'=>$chart,'data'=>$data);
         return $result;
     }
-    public function JumlahKunjunganLayerB($query_date,$USER_ID)
+    public function JumlahKunjunganLayerB($TGLSTART,$TGLEND,$USER_ID)
     {
         
         $USER_ID    = $USER_ID;
-        $f_date     = date('Y-m-01', strtotime($query_date));
-        $l_date     = date('Y-m-t', strtotime($query_date));
+        $f_date     = date('Y-m-01', strtotime($TGLSTART));
+        $l_date     = date('Y-m-t', strtotime($TGLEND));
 
-        $namabulan  = date('F Y', strtotime($query_date));
+        $namabulan  = date('F Y', strtotime($TGLSTART));
         
         $commandlayer    = Yii::$app->db3
                                 ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer WHERE layer.LAYER_ID != 5')
