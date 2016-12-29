@@ -100,7 +100,7 @@ class EsmsalescontrolController extends ActiveController
 	{		
 		if (!empty($_GET)) 
         {
-            $query_date = $_GET['MONTH'];
+            $query_date = $_GET['TGLSTART'];
         }
         else
         {
@@ -109,10 +109,13 @@ class EsmsalescontrolController extends ActiveController
         $data[] = array(
         					'AC'		=> $this->CustomerCall($query_date),
         					'EC'		=> $this->EffectiveCall(9,$query_date),
-        					'SC'		=> $this->EffectiveCall(10,$query_date)
+        					
         				);
 		$data[] = array(
+							
+							'SC'		=> $this->EffectiveCall(10,$query_date),
 							'NOO'		=> $this->NOO($query_date,15),
+							// 'ABSENSI'		=> $this->ABSENSI($query_date)
 							// 'RO'		=> $this->NOO($query_date,50),
 							// 'SO'		=> $this->NOO($query_date,50),
 						);
@@ -164,6 +167,23 @@ class EsmsalescontrolController extends ActiveController
 												')
                              	->queryOne();
         $result = $commandgeo['JUMLAH'].'/'.$target;                     	
+     	return $result;
+	}
+
+	protected function ABSENSI($query_date) 
+	{
+		$f_date = $query_date;
+		$commandgeo    = Yii::$app->db3
+                                ->createCommand('
+                                					SELECT R.ACTIVE,COUNT(users.id)TOTAL FROM dbm001.user users 
+													INNER JOIN dbm_086.user_profile sales_profile
+													ON users.id = sales_profile.ID_USER
+													INNER JOIN
+														(SELECT COUNT(ID)AS ACTIVE FROM c0015  WHERE TGL = "'.$f_date.'")R
+													WHERE users.POSITION_LOGIN = 1 AND users.USER_ALIAS IS NOT NULL AND users.ID NOT IN(61,62)
+												')
+                             	->queryOne();
+        $result = $commandgeo['ACTIVE'].'/'.$commandgeo['TOTAL'];                     	
      	return $result;
 	}
 }

@@ -80,7 +80,8 @@ class EsmsalescustomerController extends ActiveController
 						'Total_Layer'		=> $this->TotalLayer(),
 						'Total_Geo' 		=> $this->TotalGeo(),
 						'CombLayerGeo' 		=> $this->CombGeoLayer(),
-                        'CustomerParent'    => $this->CustomerParent()
+                        'CustomerParent'    => $this->CustomerParent(),
+                        'CustomerGeoParent' => $this->CombGeoParent()
 					);
 	} 
 
@@ -193,9 +194,72 @@ class EsmsalescustomerController extends ActiveController
         $FS = new FusionChart();
         $FS->setCaption('Customer Parent');
         $FS->setXAxisName('Parent');
+        $FS->setLabelDisplay('rotate');
+        $FS->setSlantLabels(1);
         $chart = Yii::$app->ambilkonci->objectToArray($FS);
 
         $result = array('chart'=>$chart,'data'=>$data);
+        return $result;
+    }
+
+    public function CombGeoParent()
+    {
+        
+        $commandgeo    = Yii::$app->db3
+                                ->createCommand('SELECT geo.GEO_ID,geo.GEO_NM FROM dbc002.c0002scdl_geo geo WHERE geo.GEO_ID != 1 AND geo.GEO_ID != 7')
+                                ->queryAll();
+        
+        $commandparent    = Yii::$app->db3
+                                ->createCommand('
+                                                    SELECT a.CUST_KD,a.CUST_GRP,a.CUST_NM FROM dbc002.c0001 a
+                                                    INNER JOIN 
+                                                    (
+                                                        SELECT B.CUST_KD,SUM(B.status)- 1 as value FROM dbc002.c0001 B  
+                                                        WHERE B.STATUS <> 3 GROUP BY B.CUST_GRP 
+                                                        ORDER BY value ASC
+                                                    )C
+                                                    ON a.CUST_KD = C.CUST_KD WHERE a.CUST_KD = a.CUST_GRP AND a.STATUS <> 3
+                                                ')
+                                ->queryAll();
+
+        foreach ($commandparent as $key => $valueparent) 
+        {
+            $PARENT         = $valueparent['CUST_NM'];
+            $category[]     = array('label' => $PARENT);
+        }
+
+        foreach ($commandgeo as $key => $valuegeo) 
+        {
+            $ID_GEO         = $valuegeo['GEO_ID'];
+            $data           = array();
+            foreach ($commandparent as $key => $valueparent) 
+            {
+                $ID_GROUP       = $valueparent['CUST_GRP'];
+                $commandcust    = Yii::$app->db3
+                                ->createCommand('
+                                                    SELECT cust.CUST_KD FROM dbc002.c0001 cust 
+                                                    WHERE  cust.STATUS <> 3 
+                                                    AND cust.GEO != 7 
+                                                    AND cust.GEO != 1 
+                                                    AND cust.GEO ='.$ID_GEO.' 
+                                                    AND cust.CUST_GRP= "'.$ID_GROUP.'"
+                                                ')
+                                ->queryAll();
+                $jumlah     = count($commandcust);
+                $data[]     = array('value'=>$jumlah);
+            }
+            $dataset[]  = array('seriesname'=>$valuegeo['GEO_NM'],'data'=>$data);
+        }
+        $categories[]   = array('category'=>$category);
+
+        $FS = new FusionChart();
+        $FS->setCaption('Customer Geolocation Parent');
+        $FS->setXAxisName('Geolocation');
+        $FS->setLabelDisplay('rotate');
+        $FS->setSlantLabels(1);
+        $chart = Yii::$app->ambilkonci->objectToArray($FS);
+
+        $result = array('chart'=>$chart,'categories'=>$categories,'dataset'=>$dataset);
         return $result;
     }
 

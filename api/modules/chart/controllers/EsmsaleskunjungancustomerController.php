@@ -124,7 +124,7 @@ class EsmsaleskunjungancustomerController extends ActiveController
         $FS->setCaption('Cust Kunjungan Geo');
         $FS->setSubCaption($namabulan);
         $FS->setXAxisName('Geo');
-        $FS->setYAxisName('Jumlah Kunjungan');
+        $FS->setYAxisName('Customer Yang Dikunjungi');
         $chart = Yii::$app->ambilkonci->objectToArray($FS);
 
 		$result = array('chart'=>$chart,'data'=>$data);

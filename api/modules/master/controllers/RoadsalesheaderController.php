@@ -5,6 +5,8 @@ namespace api\modules\master\controllers;
 use yii;
 use yii\rest\ActiveController;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
+
 use common\models\User;
 use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
@@ -14,10 +16,8 @@ use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use api\modules\master\models\Detailkunjungan;
+use api\modules\master\models\Roadsalesheader;
 use yii\web\HttpException;
-use yii\data\ArrayDataProvider;
-use yii\db\Query;
 
 //use yii\data\ActiveDataProvider;
 /**
@@ -25,12 +25,12 @@ use yii\db\Query;
  *
  * @author -ptr.nov-
  */
-class SalestrackperuserController extends ActiveController
+class RoadsalesheaderController extends ActiveController
 {
-    public $modelClass = 'api\modules\master\models\Detailkunjungan';
+    public $modelClass = 'api\modules\master\models\Roadsalesheader';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'SalesTrackPerUser',
+		'collectionEnvelope' => 'Roadsalesheader',
 	];
 	  
     public function behaviors()    
@@ -78,46 +78,56 @@ class SalestrackperuserController extends ActiveController
         ]);
     }
 
+    #http://stackoverflow.com/questions/25522462/yii2-rest-query
     public function actionSearch()
     {
-        
-
-        $tgl        = $_GET['TGL'];
-        $sales      = $_GET['USER_ID'];
-        if(is_numeric($sales))
+        if (!empty($_GET)) 
         {
-            $data_view    = Yii::$app->db3
-                                ->createCommand('SELECT A.ID AS ID_SCDLDETAIL,A.USER_ID,x3.NM_FIRST,x2.CUST_KD,x2.CUST_NM,A.CHECKIN_TIME,A.CHECKOUT_TIME FROM c0002scdl_detail A
-                                                    INNER JOIN c0001 x2 on A.CUST_ID = x2.CUST_KD
-                                                    INNER JOIN dbm_086.user_profile x3 on A.USER_ID = x3.ID_USER
-                                                    WHERE A.TGL= "'.$tgl.'" AND A.USER_ID = '.$sales.' AND A.STATUS <> 3')
-                                ->queryAll();
+            $TGLSTART   = $_GET['TGLSTART'];
+            $TGLEND     = $_GET['TGLEND'];
+            $USERID     = $_GET['USER_ID'];
+            $f_date     = date('Y-m-d H:i:s', strtotime($TGLSTART));
+            $l_date     = date('Y-m-d 23:59:59', strtotime($TGLEND));
+
+            $data_view=Yii::$app->db3
+                                ->createCommand("SELECT * FROM c0022Header header WHERE header.CREATED_AT >=:TGL_FIRST AND header.CREATED_AT <=:TGL_LAST AND header.USER_ID =:USER_ID ORDER BY header.CREATED_AT DESC")
+                                ->bindValue(':TGL_FIRST', $f_date)
+                                ->bindValue(':TGL_LAST', $l_date)
+                                ->bindValue(':USER_ID', $USERID)
+                                ->queryAll();  
+            $provider= new ArrayDataProvider(['allModels'=>$data_view,'pagination' => ['pageSize' => 1000,]]);
+
+            return $provider;
+
+        } 
+        else 
+        {
+            return new \yii\web\HttpException(400, 'There are no query string');
         }
+    }
+    public function actions()
+    {
+        $actions = parent::actions();
+        unset($actions['create']);
+        return $actions;
+    }
+    
+    public function actionCreate()
+    {
+        $params = $_REQUEST;
+        $tanggal = new \Datetime('now');
+        $model              = new Roadsalesheader();
+        $model->attributes  = $params;
+        $model->TGL         = $tanggal->format('Y-m-d');
+        
+        if ($model->save()) 
+        {
+            return $model->attributes;
+        } 
         else
         {
-            $data_view    = Yii::$app->db3
-                                ->createCommand('
-                                                    SELECT A.ID AS ID_SCDLDETAIL,A.USER_ID,x2.CUST_KD,
-                                                    x2.CUST_NM,A.CHECKIN_TIME,A.CHECKOUT_TIME FROM c0002scdl_detail A
-                                                    INNER JOIN c0001 x2 on A.CUST_ID = x2.CUST_KD
-                                                    INNER JOIN dbm001.user x4 on A.USER_ID = x4.id
-                                                    WHERE A.TGL= "'.$tgl.'" AND x4.username ="'.$sales.'" AND A.STATUS <> 3
-                                                ')
-                                ->queryAll();
+            return array('errors'=>$model->errors);
         }
-       // $data_view=Yii::$app->db3->createCommand("CALL MOBILE_CUSTOMER_VISIT_sales_track_per_user('".$tgl."','".$sales."')")->queryAll();  
-
-        
-
-        $provider= new ArrayDataProvider([
-        'allModels'=>$data_view,
-         'pagination' => [
-            'pageSize' => 1000,
-            ]
-        ]);
-
-        return $provider;
-
     }
 }
 

@@ -24,7 +24,7 @@ use api\modules\chart\models\Cnfweek;
 use api\modules\chart\models\Cnfmonth;
 use api\modules\chart\models\FusionChart;
 
-class EsmsalesstockcustomerController extends ActiveController
+class EsmsalesrequestcustomerController extends ActiveController
 {
 	public $modelClass = 'api\modules\chart\models\Cnfweek';
 	  
@@ -84,20 +84,22 @@ class EsmsalesstockcustomerController extends ActiveController
 	{
 		if (!empty($_GET)) 
         {
-        	$bulan = $_GET['MONTH'];
+            $TGLSTART   = $_GET['TGLSTART'];
+            $TGLEND     = $_GET['TGLEND'];
+
+            $f_date     = date('Y-m-d', strtotime($TGLSTART));
+            $l_date     = date('Y-m-d', strtotime($TGLEND));
+
+            return array(
+                            'RequestPerGeo'              => $this->RequestPerGeo($f_date,$l_date),
+                            'RequestPerLayer'            => $this->RequestPerLayer($f_date,$l_date),
+                            'RequestTotal'               => $this->RequestTotal($f_date,$l_date)
+                        );
         }
-        else
-        {
-        	$bulan = 10;
-        }
-		return array(
-						'StockPerGeo'		       => $this->StockPerGeo(),
-                        'StockPerLayer'             => $this->StockPerLayer(),
-                        'StockTotalPerProducts'     => $this->StockTotalPerProducts()
-					);
+
 	} 
 
-	public function StockPerGeo()
+	public function RequestPerGeo($f_date,$l_date)
 	{
 		$commandgeo             = Yii::$app->db3
                                 ->createCommand('SELECT geo.GEO_ID,geo.GEO_NM FROM dbc002.c0002scdl_geo geo WHERE geo.GEO_ID IS NOT NULL AND geo.GEO_ID != 1 AND geo.GEO_ID != 7')
@@ -105,7 +107,9 @@ class EsmsalesstockcustomerController extends ActiveController
         $commandproduct         = Yii::$app->db3
                                 ->createCommand('SELECT prod.KD_BARANG,prod.NM_BARANG,prod.KD_TYPE FROM dbc002.b0001 prod WHERE prod.KD_TYPE=01 AND prod.KD_KATEGORI=01')
                                 ->queryAll();
-        $tanggalsekarang = date("Y/m/01");
+        $f_date     = $f_date;
+        $l_date     = $l_date;
+
         foreach ($commandgeo as $key => $valuegeo) 
         {
             $GEO_NM         = $valuegeo['GEO_NM'];
@@ -124,10 +128,15 @@ class EsmsalesstockcustomerController extends ActiveController
                 $GEO_ID         = $valuegeo['GEO_ID'];
 
                 $commandstock   = Yii::$app->db3
-                                ->createCommand('SELECT s.TGL,s.SO_QTY FROM dbc002.so_t2 s INNER JOIN (SELECT MAX(stock.ID)AS MAX_ID FROM so_t2 stock 
-                    INNER JOIN dbc002.c0001 cust on stock.CUST_KD = cust.CUST_KD 
-                    WHERE stock.KD_BARANG = "'. $KD_BARANG. '" AND cust.GEO = '.$GEO_ID.' AND stock.SO_TYPE = 5 AND stock.TGL >= "2016-10-01" GROUP BY cust.CUST_NM ORDER BY cust.CUST_NM 
-                    )as R on s.ID = R.MAX_ID')
+                                ->createCommand('
+                                                    SELECT sale.TGL,sale.CUST_KD,sale.KD_BARANG,sale.NM_BARANG,SUM(sale.SO_QTY)AS SO_QTY,sale.CUST_NM,cust.GEO FROM so_t2 sale
+                                                    INNER JOIN c0001 cust
+                                                    ON sale.CUST_KD = cust.CUST_KD
+                                                    WHERE sale.TGL >="'.$f_date.'" AND sale.TGl <= "'.$l_date.'"
+                                                    AND sale.KD_BARANG = "'.$KD_BARANG.'" 
+                                                    AND sale.SO_TYPE = 9 AND cust.GEO='.$GEO_ID.'
+                                                    GROUP BY sale.NM_BARANG
+                                                ')
                                 ->queryAll();
 
                 $total = 0;
@@ -151,7 +160,7 @@ class EsmsalesstockcustomerController extends ActiveController
         $categories[]   = array('category'=>$category);
 
         $FS = new FusionChart();
-        $FS->setCaption('Stock Per Geo');
+        $FS->setCaption('Request Per Geo');
         $FS->setXAxisName('Geo');
         $chart = Yii::$app->ambilkonci->objectToArray($FS);
 
@@ -159,7 +168,7 @@ class EsmsalesstockcustomerController extends ActiveController
         return $result;
 	}
 
-    public function StockPerLayer()
+    public function RequestPerLayer($f_date,$l_date)
     {
         $commandlayer    = Yii::$app->db3
                                 ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer')
@@ -168,7 +177,10 @@ class EsmsalesstockcustomerController extends ActiveController
         $commandproduct         = Yii::$app->db3
                                 ->createCommand('SELECT prod.KD_BARANG,prod.NM_BARANG,prod.KD_TYPE FROM dbc002.b0001 prod WHERE prod.KD_TYPE=01 AND prod.KD_KATEGORI=01')
                                 ->queryAll();
-        $tanggalsekarang = date("Y/m/01");
+
+        $f_date     = $f_date;
+        $l_date     = $l_date;
+
         foreach ($commandlayer as $key => $valuelayer) 
         {
             $LAYER_NM       = $valuelayer['LAYER_NM'];
@@ -186,10 +198,15 @@ class EsmsalesstockcustomerController extends ActiveController
                 $LAYER_ID         = $valuelayer['LAYER_ID'];
 
                 $commandstock   = Yii::$app->db3
-                                ->createCommand('SELECT s.TGL,s.SO_QTY FROM dbc002.so_t2 s INNER JOIN (SELECT MAX(stock.ID)AS MAX_ID FROM so_t2 stock 
-                                    INNER JOIN dbc002.c0001 cust on stock.CUST_KD = cust.CUST_KD 
-                                    WHERE stock.KD_BARANG = "'. $KD_BARANG. '" AND cust.LAYER = '.$LAYER_ID.' AND stock.SO_TYPE = 5 AND stock.TGL >= "2016-10-01" GROUP BY cust.CUST_NM ORDER BY cust.CUST_NM 
-                    )as R on s.ID = R.MAX_ID')
+                                ->createCommand('
+                                                    SELECT sale.TGL,sale.CUST_KD,sale.KD_BARANG,sale.NM_BARANG,SUM(sale.SO_QTY)AS SO_QTY,sale.CUST_NM,cust.GEO FROM so_t2 sale
+                                                    INNER JOIN c0001 cust
+                                                    ON sale.CUST_KD = cust.CUST_KD
+                                                    WHERE sale.TGL >="'.$f_date.'" AND sale.TGl <= "'.$l_date.'"
+                                                    AND sale.KD_BARANG = "'.$KD_BARANG.'" 
+                                                    AND sale.SO_TYPE = 9 AND cust.LAYER='.$LAYER_ID.'
+                                                    GROUP BY sale.NM_BARANG
+                                                ')
 
                                 ->queryAll();
                 $total = 0;
@@ -213,37 +230,37 @@ class EsmsalesstockcustomerController extends ActiveController
 
         $categories[]   = array('category'=>$category);
         $FS = new FusionChart();
-        $FS->setCaption('Stock Per Layer');
+        $FS->setCaption('Request Per Layer');
         $FS->setXAxisName('Layer');
         $chart = Yii::$app->ambilkonci->objectToArray($FS);
         $result = array('chart'=>$chart,'categories'=>$categories,'dataset'=>$dataset);
         return $result;
     }
 
-    public function StockTotalPerProducts()
+    public function RequestTotal($f_date,$l_date)
     {
+        $f_date     = $f_date;
+        $l_date     = $l_date;
 
         $commandproduct         = Yii::$app->db3
                                 ->createCommand('SELECT prod.KD_BARANG,prod.NM_BARANG,prod.KD_TYPE FROM dbc002.b0001 prod WHERE prod.KD_TYPE=01 AND prod.KD_KATEGORI=01')
                                 ->queryAll();
 
-        foreach ($commandproduct as $key => $valueproduct) 
-        {
-            $KD_BARANG      = $valueproduct['KD_BARANG'];
-            $NM_BARANG      = $valueproduct['NM_BARANG'];
-
-                $commandstock   = Yii::$app->db3
-                                ->createCommand('SELECT SUM(s.SO_QTY)AS TOTAL FROM dbc002.so_t2 s INNER JOIN (SELECT MAX(stock.ID)AS MAX_ID FROM so_t2 stock 
-                                    INNER JOIN dbc002.c0001 cust on stock.CUST_KD = cust.CUST_KD 
-                                    WHERE stock.KD_BARANG = "'. $KD_BARANG. '" AND stock.SO_TYPE = 5 AND stock.TGL >= "2016-10-01" GROUP BY cust.CUST_NM ORDER BY cust.CUST_NM 
-                    )as R on s.ID = R.MAX_ID')
-                                ->queryAll();
-            $data[]         = array('label' => $NM_BARANG,'value'=>$commandstock[0]['TOTAL']);
-
-        }
+        $commandstock   = Yii::$app->db3
+                        ->createCommand('
+                                            SELECT sale.NM_BARANG AS label,SUM(CASE WHEN sale.SO_QTY < 0 THEN 0 ELSE sale.SO_QTY END)AS value,sale.CUST_NM,cust.GEO FROM so_t2 sale
+                                            INNER JOIN c0001 cust
+                                            ON sale.CUST_KD = cust.CUST_KD
+                                            WHERE sale.TGL >="'.$f_date.'" AND sale.TGl <= "'.$l_date.'"
+                                            AND sale.SO_TYPE = 9
+                                            GROUP BY sale.NM_BARANG
+                                            ORDER BY sale.KD_BARANG
+                                        ')
+                        ->queryAll();
+        $data         = $commandstock;
 
         $FS = new FusionChart();
-        $FS->setCaption('Total Stock Per Products');
+        $FS->setCaption('Total Request Per Products');
         $FS->setXAxisName('Products');
         $chart = Yii::$app->ambilkonci->objectToArray($FS);
         $result = array('chart'=>$chart,'data'=>$data);

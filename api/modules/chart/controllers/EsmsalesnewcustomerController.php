@@ -84,25 +84,27 @@ class EsmsalesnewcustomerController extends ActiveController
 	{
 		if (!empty($_GET)) 
         {
-        	$query_date = $_GET['MONTH'];
-        }
-        else
-        {
-        	$query_date = date('Y-m-d');
-        }
-		return array(
-						'NewCustCombGeoLayer'		=> $this->NewCustCombGeoLayer($query_date),
-					);
+        	$TGLSTART   = $_GET['TGLSTART'];
+            $TGLEND     = $_GET['TGLEND'];
+
+        	$f_date     = date('Y-m-d', strtotime($TGLSTART));
+	        $l_date     = date('Y-m-d', strtotime($TGLEND));
+
+			return array(
+							'NewCustCombGeoLayer'		=> $this->NewCustCombGeoLayer($f_date,$l_date),
+							'NewCustCombGeoSales'		=> $this->NewCustCombGeoSales($f_date,$l_date),
+						);
+		}
 	} 
 
-	public function NewCustCombGeoLayer($query_date)
+	public function NewCustCombGeoLayer($f_date,$l_date)
 	{
 		
 
-        $f_date     = date('Y-m-01', strtotime($query_date));
-        $l_date     = date('Y-m-t', strtotime($query_date));
+        $f_date     = $f_date;
+        $l_date     = $l_date;
 
-        $namabulan  = date('F Y', strtotime($query_date));
+        $namabulan  = date('F Y', strtotime($f_date));
 
         $commandgeo    = Yii::$app->db3
                                 ->createCommand('SELECT geo.GEO_ID,geo.GEO_NM FROM dbc002.c0002scdl_geo geo WHERE geo.GEO_ID != 1 AND geo.GEO_ID != 7')
@@ -142,6 +144,47 @@ class EsmsalesnewcustomerController extends ActiveController
         $chart = Yii::$app->ambilkonci->objectToArray($FS);
 
 		$result = array('chart'=>$chart,'categories'=>$categories,'dataset'=>$dataset);
+		return $result;
+	}
+	public function NewCustCombGeoSales($f_date,$l_date)
+	{
+		
+
+        $f_date     = $f_date;
+        $l_date     = $l_date;
+
+        $namabulan  = date('F Y', strtotime($f_date));
+        $parent 	= 'CUS.2016.000637';
+
+        $commandlayer    = Yii::$app->db3
+                                ->createCommand('
+	                                				SELECT sales_profile.NM_FIRST as label,(CASE WHEN B.JUMLAH THEN B.JUMLAH ELSE 0 END)AS value
+													FROM dbm001.user users 
+													INNER JOIN dbm_086.user_profile sales_profile
+													ON users.id = sales_profile.ID_USER
+													LEFT JOIN
+													(
+															SELECT count(prof.id)AS JUMLAH,prof.username FROM c0001 cust 
+															INNER JOIN dbm001.user prof
+															ON cust.CREATED_BY = prof.username
+															WHERE cust.CUST_GRP = "'.$parent.'" 
+															AND cust.JOIN_DATE >= "'.$f_date.'" AND cust.JOIN_DATE <= "'.$l_date.'" GROUP BY cust.CREATED_BY
+													)B
+													ON users.username = B.username
+													WHERE users.POSITION_LOGIN = 1 AND users.USER_ALIAS IS NOT NULL AND users.ID NOT IN(61,62) ORDER BY users.id
+												')
+                                ->queryAll();
+
+        	$data 		= $commandlayer;
+
+
+        $FS = new FusionChart();
+        $FS->setCaption('New Customer ');
+        $FS->setSubCaption('On '.$namabulan);
+        $FS->setXAxisName('Geolocation');
+        $chart = Yii::$app->ambilkonci->objectToArray($FS);
+
+		$result = array('chart'=>$chart,'data'=>$data);
 		return $result;
 	}
 

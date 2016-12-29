@@ -139,7 +139,7 @@ class EsmsalesmduserController extends ActiveController
 
 	        $result = array('chart'=>$chart,'categories'=>$categories,'dataset'=>$dataset);
 	        $resulteffectivecall = $this->EffectiveCall($TGLSTART,$TGLEND,$USER_ID);
-	        $resultNewCustomer	 = $this->NewCustomer($TGLSTART,$TGLEND);
+	        $resultNewCustomer	 = $this->NewCustomer($TGLSTART,$TGLEND,$USER_ID);
             $JumlahKunjunganLayerA  = $this->JumlahKunjunganLayerA($TGLSTART,$TGLEND,$USER_ID);
             $JumlahKunjunganLayerB  = $this->JumlahKunjunganLayerB($TGLSTART,$TGLEND,$USER_ID);
 	        return array(
@@ -217,13 +217,13 @@ class EsmsalesmduserController extends ActiveController
         return $result;
     }
 
-    public function NewCustomer($TGLSTART,$TGLEND)
+    public function NewCustomer($TGLSTART,$TGLEND,$USER_ID)
 	{
 		
 
         $f_date     = date('Y-m-01', strtotime($TGLSTART));
         $l_date     = date('Y-m-t', strtotime($TGLEND));
-
+        $USER_ID    = $USER_ID;
         $namabulan  = date('F Y', strtotime($TGLSTART));
 
         $commandgeo    = Yii::$app->db3
@@ -231,7 +231,7 @@ class EsmsalesmduserController extends ActiveController
                                 ->queryAll();
         
         $commandlayer    = Yii::$app->db3
-                                ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer WHERE layer.LAYER_ID != 5')
+                                ->createCommand('SELECT layer.LAYER_ID,layer.LAYER_NM FROM dbc002.c0002scdl_layer layer')
                                 ->queryAll();
 
         foreach ($commandgeo as $key => $valuegeo) 
@@ -248,7 +248,15 @@ class EsmsalesmduserController extends ActiveController
 	        {
 	        	$ID_GEO 	= $valuegeo['GEO_ID'];
 	        	$commandcust    = Yii::$app->db3
-                                ->createCommand('SELECT cust.CUST_KD FROM dbc002.c0001 cust WHERE cust.JOIN_DATE BETWEEN "'.$f_date.'" AND "'.$l_date.'" AND cust.GEO =' .$ID_GEO. ' AND cust.LAYER='.$ID_LAYER)
+                                ->createCommand('
+                                                    SELECT cust.CUST_KD FROM dbc002.c0001 cust
+                                                    INNER JOIN dbm001.user users on cust.CREATED_BY = users.username 
+                                                    WHERE cust.JOIN_DATE BETWEEN "'.$f_date.'" 
+                                                    AND "'.$l_date.'"
+                                                    AND users.id = '.$USER_ID.' 
+                                                    AND cust.GEO =' .$ID_GEO. ' 
+                                                    AND cust.LAYER='.$ID_LAYER
+                                                )
                                 ->queryAll();
                 $jumlah		= count($commandcust);
                 $data[]     = array('value'=>$jumlah);

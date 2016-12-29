@@ -133,7 +133,6 @@ class EsmsalescontroldetailusercallController extends ActiveController
         {
         	return array('CustomerCall'		=> $this->REQUESTBYCUST($query_date,10));
         }
-
 	}
 
  	protected function CustomerCall($query_date) 
@@ -196,7 +195,7 @@ class EsmsalescontroldetailusercallController extends ActiveController
 		$type 	= $type;
 		$commandgeo    = Yii::$app->db3
                                 ->createCommand('
-													SELECT sales_profile.NM_FIRST,count(B.USER_ID)AS AC,5 AS TOTAL 
+													SELECT sales_profile.NM_FIRST,users.username AS USERNAME,count(B.USER_ID)AS AC,5 AS TOTAL 
 													FROM dbm001.user users 
 													INNER JOIN dbm_086.user_profile sales_profile
 													ON users.id = sales_profile.ID_USER

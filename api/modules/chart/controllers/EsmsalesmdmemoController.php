@@ -94,9 +94,12 @@ class EsmsalesmdmemoController extends ActiveController
     }
     public function actionSearch()
     {
-        $query_date = $_GET['TGL'];
-        $f_date     = date('Y-m-01', strtotime($query_date));
-        $l_date     = date('Y-m-t', strtotime($query_date));
+        $TGLSTART   = $_GET['TGLSTART'];
+        $TGLEND     = $_GET['TGLEND'];
+
+    	$f_date     = date('Y-m-d', strtotime($TGLSTART));
+        $l_date     = date('Y-m-d', strtotime($TGLEND));
+        
         $data_view=Yii::$app->db3
                                 ->createCommand("SELECT ba.NM_USER,users.NM_FIRST,ba.NM_CUSTOMER,ba.CREATE_AT,ba.ISI_MESSAGES,users.IMG_BASE64
                                 FROM dbc002.c0014 ba  
