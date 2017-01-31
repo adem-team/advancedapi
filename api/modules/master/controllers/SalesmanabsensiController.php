@@ -93,10 +93,7 @@ class SalesmanabsensiController extends ActiveController
             }
             try 
             {
-                $provider = new ActiveDataProvider([
-                    'query' => $model->find()->where($_GET),
-                    'pagination' => false
-                ]);
+                $provider = new ActiveDataProvider(['query' => $model->find()->where($_GET),'pagination' => false]);
             } 
             catch (Exception $ex) 
             {

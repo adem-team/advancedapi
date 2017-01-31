@@ -7,7 +7,6 @@ use kartik\datecontrol\Module;
 
 use yii\rest\ActiveController;
 use yii\data\ActiveDataProvider;
-use yii\data\ArrayDataProvider;
 use yii\web\HttpException;
 
 use yii\filters\auth\CompositeAuth;
@@ -22,9 +21,9 @@ use yii\helpers\Json;
 use yii\web\Response;
 
 //use common\models\User;
-
-use api\modules\chart\models\Esmsalesmdmemo;
-
+use api\modules\sistem\models\UserloginSearch;
+use api\modules\master\models\Salesmanabsensi;
+use yii\data\ArrayDataProvider;
 
 /**
   * Controller HRM Personalia Class  
@@ -34,21 +33,18 @@ use api\modules\chart\models\Esmsalesmdmemo;
   * @link http://api.lukisongroup.int/chart/hrmpersonalias
   * @see https://github.com/C12D/advanced/blob/master/api/modules/chart/controllers/PilotpController.php
  */
-class EsmsalesmdmemoController extends ActiveController
+class EsmsalescontrolabsensiController extends ActiveController
 {	
 	/**
 	  * Source Database declaration 
 	 */
-    public $modelClass = 'api\modules\chart\models\Esmsalesmdmemo';
-	 public $serializer = [
+    public $modelClass = 'api\modules\master\models\Salesmanabsensi';
+    public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'Salesmemo',
-	]; 
-	
-	/**
-     * @inheritdoc
-     */
-    public function behaviors()    {
+		'collectionEnvelope' => 'Salesmanabsensi',
+	];
+    public function behaviors()    
+    {
         return ArrayHelper::merge(parent::behaviors(), [
             /* 'authenticator' => [
                 'class' => CompositeAuth::className(),
@@ -94,22 +90,23 @@ class EsmsalesmdmemoController extends ActiveController
     }
     public function actionSearch()
     {
-        $TGLSTART   = $_GET['TGLSTART'];
-        $TGLEND     = $_GET['TGLEND'];
-
-    	$f_date     = date('Y-m-d', strtotime($TGLSTART));
-        $l_date     = date('Y-m-d', strtotime($TGLEND));
-        
-        $data_view=Yii::$app->db3
-                                ->createCommand("SELECT ba.NM_USER,users.NM_FIRST,ba.NM_CUSTOMER,ba.CREATE_AT,ba.ISI_MESSAGES
-                                FROM dbc002.c0014 ba  
-                                INNER JOIN dbm_086.user_profile users on ba.CREATE_BY = users.ID_USER WHERE ba.TGL >=:TGL_FIRST and ba.TGL <=:TGL_LAST ORDER BY ba.ID ASC")
-                                ->bindValue(':TGL_FIRST', $f_date)
-                                ->bindValue(':TGL_LAST', $l_date)
-                                ->queryAll();  
-        $provider= new ArrayDataProvider(['allModels'=>$data_view,'pagination' => ['pageSize' => 1000,]]);
-
-        return $provider;
+        if (!empty($_GET)) 
+        {
+            $TGL 	= $_GET['TGL'];
+            $data_view    = Yii::$app->db3
+                            ->createCommand('SELECT users.id AS USER_ID,users.username as USERNAME,sales_profile.NM_FIRST,ab.WAKTU_MASUK,ab.WAKTU_KELUAR 
+                            				 FROM dbm001.user users 
+											 INNER JOIN dbm_086.user_profile sales_profile
+											 ON users.id = sales_profile.ID_USER
+											 INNER JOIN dbc002.c0015 ab
+											 ON users.id = ab.USER_ID
+											 WHERE users.POSITION_LOGIN = 1 AND ab.TGL = "'.$TGL.'" AND users.USER_ALIAS IS NOT NULL AND users.ID NOT IN(61,62)
+                                            ')
+                            ->queryAll();
+        	$provider= new ArrayDataProvider(['allModels'=>$data_view,'pagination' => ['pageSize' => 1000,]]);
+        	return $provider;
+    	}
     }
+
 }
 

@@ -85,17 +85,35 @@ class RoadsalesheaderController extends ActiveController
         {
             $TGLSTART   = $_GET['TGLSTART'];
             $TGLEND     = $_GET['TGLEND'];
-            $USERID     = $_GET['USER_ID'];
             $f_date     = date('Y-m-d H:i:s', strtotime($TGLSTART));
             $l_date     = date('Y-m-d 23:59:59', strtotime($TGLEND));
 
-            $data_view=Yii::$app->db3
+            if(isset($_GET['USER_ID']))
+            {
+                $USERID     = $_GET['USER_ID'];
+                $data_view=Yii::$app->db3
                                 ->createCommand("SELECT * FROM c0022Header header WHERE header.CREATED_AT >=:TGL_FIRST AND header.CREATED_AT <=:TGL_LAST AND header.USER_ID =:USER_ID ORDER BY header.CREATED_AT DESC")
                                 ->bindValue(':TGL_FIRST', $f_date)
                                 ->bindValue(':TGL_LAST', $l_date)
                                 ->bindValue(':USER_ID', $USERID)
                                 ->queryAll();  
-            $provider= new ArrayDataProvider(['allModels'=>$data_view,'pagination' => ['pageSize' => 1000,]]);
+                $provider= new ArrayDataProvider(['allModels'=>$data_view,'pagination' => ['pageSize' => 1000,]]); 
+            }
+            else
+            {
+                $data_view=Yii::$app->db3
+                                ->createCommand("   SELECT header.*,users.username FROM c0022Header header
+                                                    INNER JOIN dbm001.user users
+                                                    ON header.USER_ID = users.id 
+                                                    WHERE header.CREATED_AT >=:TGL_FIRST AND 
+                                                    header.CREATED_AT <=:TGL_LAST ORDER BY header.CREATED_AT DESC
+                                                ")
+                                ->bindValue(':TGL_FIRST', $f_date)
+                                ->bindValue(':TGL_LAST', $l_date)
+                                ->queryAll();  
+                $provider= new ArrayDataProvider(['allModels'=>$data_view,'pagination' => ['pageSize' => 1000,]]);   
+            }
+            
 
             return $provider;
 

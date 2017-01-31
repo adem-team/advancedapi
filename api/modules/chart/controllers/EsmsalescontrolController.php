@@ -113,7 +113,7 @@ class EsmsalescontrolController extends ActiveController
         				);
 		$data[] = array(
 							
-							'SC'		=> $this->EffectiveCall(10,$query_date),
+							'SOC'		=> $this->EffectiveCall(10,$query_date),
 							'NOO'		=> $this->NOO($query_date,15),
 							// 'ABSENSI'		=> $this->ABSENSI($query_date)
 							// 'RO'		=> $this->NOO($query_date,50),
@@ -127,7 +127,13 @@ class EsmsalescontrolController extends ActiveController
 		$f_date = $query_date;
 		$commandgeo    = Yii::$app->db3
                                 ->createCommand('   SELECT scdl.CUST_ID,
-													SUM(CASE WHEN (scdl.STATUS=1) THEN 1 ELSE 0 END) AS AC,
+													(
+														CASE WHEN ISNULL(SUM(CASE WHEN (scdl.STATUS=1) THEN 1 ELSE 0 END)) 
+														THEN 0 
+														ELSE 
+															SUM(CASE WHEN (scdl.STATUS=1) THEN 1 ELSE 0 END) 
+														END
+													)AS AC,
 													COUNT(scdl.CUST_ID) AS TOTCALL 
 													FROM dbc002.c0002scdl_detail scdl 
 													WHERE scdl.STATUS <> 3 AND scdl.TGL = "'.$f_date.'"
@@ -166,7 +172,7 @@ class EsmsalescontrolController extends ActiveController
                                 					cust.JOIN_DATE = "'.$f_date.'"
 												')
                              	->queryOne();
-        $result = $commandgeo['JUMLAH'].'/'.$target;                     	
+        $result = $commandgeo['JUMLAH'];                     	
      	return $result;
 	}
 

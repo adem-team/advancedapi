@@ -129,7 +129,7 @@ class EsmsalescontroldetailusercallController extends ActiveController
         {
         	return array('CustomerCall'		=> $this->REQUESTBYCUST($query_date,9));
         }
-        if($action == 'SC')
+        if($action == 'SOC')
         {
         	return array('CustomerCall'		=> $this->REQUESTBYCUST($query_date,10));
         }
@@ -145,7 +145,8 @@ class EsmsalescontroldetailusercallController extends ActiveController
 													SELECT USERS.NM_FIRST,USERS.USERNAME,
 													SUM(CASE WHEN SCDL.AC THEN SCDL.AC ELSE 0 END)AS AC,
 													SUM(CASE WHEN SCDL.NOTCALL THEN SCDL.NOTCALL ELSE 0 END)AS NOTC,
-													COUNT(SCDL.CUST_ID)AS TOTAL 
+													COUNT(SCDL.CUST_ID)AS TOTAL,
+													CONCAT(SUM(CASE WHEN SCDL.AC THEN SCDL.AC ELSE 0 END),"/",COUNT(SCDL.CUST_ID))AS NILAI 
 													FROM 
 													(
 														SELECT users.id AS USER_ID,users.username as USERNAME,sales_profile.NM_FIRST FROM dbm001.user users 
@@ -170,7 +171,8 @@ class EsmsalescontroldetailusercallController extends ActiveController
 		$parent = 'CUS.2016.000637';
 		$commandgeo    = Yii::$app->db3
                                 ->createCommand('
-                                					SELECT sales_profile.NM_FIRST as NM_FIRST,(CASE WHEN B.JUMLAH THEN B.JUMLAH ELSE 0 END)AS AC,3 AS TOTAL
+                                					SELECT sales_profile.NM_FIRST as NM_FIRST,(CASE WHEN B.JUMLAH THEN B.JUMLAH ELSE 0 END)AS AC,3 AS TOTAL,
+                                					CONCAT(CASE WHEN B.JUMLAH THEN B.JUMLAH ELSE 0 END)AS NILAI
 													FROM dbm001.user users 
 													INNER JOIN dbm_086.user_profile sales_profile
 													ON users.id = sales_profile.ID_USER
@@ -195,22 +197,21 @@ class EsmsalescontroldetailusercallController extends ActiveController
 		$type 	= $type;
 		$commandgeo    = Yii::$app->db3
                                 ->createCommand('
-													SELECT sales_profile.NM_FIRST,users.username AS USERNAME,count(B.USER_ID)AS AC,5 AS TOTAL 
+													SELECT users.username,sales_profile.NM_FIRST,(CASE WHEN ISNULL(C.AC)THEN 0 ELSE C.AC END)AS AC,(CASE WHEN ISNULL(C.TOTAL)THEN 0 ELSE C.TOTAL END)AS TOTAL,
+													CONCAT(CASE WHEN ISNULL(C.AC)THEN 0 ELSE C.AC END,"/",CASE WHEN ISNULL(C.TOTAL)THEN 0 ELSE C.TOTAL END)AS NILAI
 													FROM dbm001.user users 
 													INNER JOIN dbm_086.user_profile sales_profile
 													ON users.id = sales_profile.ID_USER
 													LEFT JOIN
-														(
-															SELECT sale.CUST_KD,sale.USER_ID FROM so_t2 sale 
-															WHERE sale.SO_TYPE = '.$type.' 
-															AND sale.TGL = "'.$f_date.'" 
-															GROUP BY sale.CUST_KD
-														)B
-													ON users.id = B.USER_ID
-													WHERE users.POSITION_LOGIN = 1 AND 
-													users.USER_ALIAS IS NOT NULL 
-													AND users.ID NOT IN(61,62)
-													GROUP BY users.id ORDER BY users.id  
+													(SELECT A.CUST_ID,A.USER_ID,B.CUST_KD,SUM(CASE WHEN  ISNULL(B.CUST_KD) THEN 0 ELSE 1 END)AS AC,COUNT(A.USER_ID)TOTAL FROM 
+														(SELECT CUST_ID,USER_ID FROM c0002scdl_detail sdtl WHERE sdtl.TGL = "'.$f_date.'")A
+															LEFT JOIN 
+														(SELECT CUST_KD,USER_ID FROM so_t2 WHERE SO_TYPE = '.$type.' AND TGL = "'.$f_date.'" GROUP BY CUST_KD)B
+														  ON A.CUST_ID = B.CUST_KD
+													GROUP BY A.USER_ID)C
+													ON users.id = C.USER_ID 
+													WHERE users.POSITION_LOGIN = 1 AND users.USER_ALIAS IS NOT NULL AND users.ID NOT IN(61,62)
+													GROUP BY users.id ORDER BY users.id 
 												')
                              	->queryAll();                     	
      	return $commandgeo;
