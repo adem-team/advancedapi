@@ -106,19 +106,54 @@ class EsmsalescontrolController extends ActiveController
         {
             $query_date = date('Y-m-d');
         }
-        $data[] = array(
-        					'AC'		=> $this->CustomerCall($query_date),
-        					'EC'		=> $this->EffectiveCall(9,$query_date),
+  //       $data[] = array(
+  //       					'AC'		=> $this->CustomerCall($query_date),
+  //       					'EC'		=> $this->EffectiveCall(9,$query_date),
+        					
+  //       				);
+		// $data[] = array(
+							
+		// 					'SO'		=> $this->EffectiveCall(10,$query_date),
+		// 					'NOO'		=> $this->NOO($query_date,15),
+		// 					// 'ABSENSI'		=> $this->ABSENSI($query_date)
+		// 					// 'RO'		=> $this->NOO($query_date,50),
+		// 					// 'SO'		=> $this->NOO($query_date,50),
+		// 				);
+		// $data[] = array(
+							
+		// 					'PROA'		=> $this->PROMO($status = 0),
+		// 					'PROF'		=> $this->PROMO($status = 1),
+		// 				);
+        $data[] = array(    'kunci'     =>'AC',
+        					'nilai'		=> $this->CustomerCall($query_date),
+        					'status'    => true
         					
         				);
-		$data[] = array(
-							
-							'SOC'		=> $this->EffectiveCall(10,$query_date),
-							'NOO'		=> $this->NOO($query_date,15),
-							// 'ABSENSI'		=> $this->ABSENSI($query_date)
-							// 'RO'		=> $this->NOO($query_date,50),
-							// 'SO'		=> $this->NOO($query_date,50),
-						);
+        $data[] = array(    'kunci'     =>'EC',
+        					'nilai'		=> $this->EffectiveCall(9,$query_date),
+        					'status'    => true
+        					
+        				);
+        $data[] = array(    'kunci'     =>'SO',
+        					'nilai'		=> $this->EffectiveCall(10,$query_date),
+        					'status'    => false
+        					
+        				);
+        $data[] = array(    'kunci'     =>'NOO',
+        					'nilai'		=> $this->NOO($query_date,15),
+        					'status'    => true
+        					
+        				);
+        $data[] = array(    'kunci'     =>'PROA',
+        					'nilai'		=> $this->PROMO($status = 0),
+        					'status'    => false
+        					
+        				);
+        $data[] = array(    'kunci'     =>'PROF',
+        					'nilai'		=> $this->PROMO($status = 1),
+        					'status'    => false
+        					
+        				);
 		return $data;
 	}
 
@@ -139,7 +174,7 @@ class EsmsalescontrolController extends ActiveController
 													WHERE scdl.STATUS <> 3 AND scdl.TGL = "'.$f_date.'"
 												')
                              	->queryOne();
-        $result = $commandgeo['AC'].'/'.$commandgeo['TOTCALL'];                     	
+        $result = $commandgeo['AC'].'-'.$commandgeo['TOTCALL'];                     	
      	return $result;
 	}
 
@@ -156,7 +191,7 @@ class EsmsalescontrolController extends ActiveController
 													cust.CUST_ID = B.CUST_KD WHERE cust.TGL = "'.$f_date.'" AND cust.STATUS <> 3
 												')
                              	->queryOne();
-        $result = $commandgeo['JUMLAH'].'/'.$commandgeo['TOTAL'];                     	
+        $result = $commandgeo['JUMLAH'].'-'.$commandgeo['TOTAL'];                     	
      	return $result;
 	}
 
@@ -189,7 +224,18 @@ class EsmsalescontrolController extends ActiveController
 													WHERE users.POSITION_LOGIN = 1 AND users.USER_ALIAS IS NOT NULL AND users.ID NOT IN(61,62)
 												')
                              	->queryOne();
-        $result = $commandgeo['ACTIVE'].'/'.$commandgeo['TOTAL'];                     	
+        $result = $commandgeo['ACTIVE'].'-'.$commandgeo['TOTAL'];                     	
+     	return $result;
+	}
+	protected function PROMO($status) 
+	{
+		$status = 0;
+		$commandgeo    = Yii::$app->db3
+                                ->createCommand('
+                                					SELECT count(ID) as JUMLAH FROM c0023 WHERE STATUS='.$status.'
+												')
+                             	->queryOne();
+        $result = $commandgeo['JUMLAH'];                    	
      	return $result;
 	}
 }
