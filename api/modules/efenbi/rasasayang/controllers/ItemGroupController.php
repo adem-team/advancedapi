@@ -80,53 +80,31 @@ class ItemGroupController extends ActiveController
     }
 	
 	public function actions()
-    {
+    {		
         return [
             'index' => [
                 'class' => 'yii\rest\IndexAction',
                 'modelClass' => $this->modelClass,
                 'prepareDataProvider' => function () {
+					
+					$param=["ItemGroupSearch"=>Yii::$app->request->queryParams];
+					//return $param;
                     $searchModel = new ItemGroupSearch();
-                    return $searchModel->search(Yii::$app->request->queryParams);
+                    return $searchModel->search($param);
+					
+					/**
+					  * Manipulation Class Molel search & Yii::$app->request->queryParams.
+					  * Author	: ptr.nov@gmail.com
+					  * Since	: 06/03/2017
+					 */
+                    //return $searchModel->search(Yii::$app->request->queryParams);
+					//Use URL : item-groups?ItemGroupSearch[ITEM_BARCODE]=0001.0001
+					//UPDATE
+					//Use URL : item-groups?ITEM_BARCODE=0001.0001
+					//$param=["ItemGroupSearch"=>Yii::$app->request->queryParams];
+					//return$searchModel->search($param);
                 },
             ],
         ];
-    }
-	
-	/**
-     * @inheritdoc
-     */
-	/*  public function actions()
-	{
-		 $actions = parent::actions();
-		unset($actions['index'], $actions['update'], $actions['create'], $actions['delete'], $actions['view']);
-		 //unset($actions['update'], $actions['create'], $actions['delete'], $actions['view']);
-		 return $actions;
-	}  */
-
-	
-	/*  public function actionIndex()
-    {
-		
-		return ['a'=>'1'];
-		// echo $this->gt_deptid();
-		//return $this->parent6milestone();
-		// return $this->parent4process_task();		
-    }  */
-	 
-    /**
-     * Finds the ItemGroup model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return ItemGroup the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-   /*  protected function findModel($id)
-    {
-        if (($model = ItemGroup::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    } */
+    }	
 }

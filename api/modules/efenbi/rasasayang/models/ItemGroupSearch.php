@@ -15,7 +15,7 @@ class ItemGroupSearch extends ItemGroup
 	public function attributes()
 	{
 		//Author -ptr.nov- add related fields to searchable attributes 
-		return array_merge(parent::attributes(), ['ItemNm']);
+		return array_merge(parent::attributes(), ['ItemNm','StoreNm']);
 	}
 	
     /**
@@ -27,7 +27,7 @@ class ItemGroupSearch extends ItemGroup
             [['CREATE_BY', 'CREATE_AT', 'UPDATE_BY', 'UPDATE_AT','ITEM_BARCODE', 'ItemNm','HPP', 'OUTLET_ID','GRP_DISPLAY'], 'safe'],
             [['STATUS','LOCATE', 'LOCATE_SUB'], 'integer'],
             [['PERSEN_MARGIN'], 'number'],
-            [['ITEM_ID',], 'string'],
+            [['ITEM_ID','StoreNm'], 'string'],
         ];
     }
 
@@ -50,7 +50,8 @@ class ItemGroupSearch extends ItemGroup
    // public function search($params, $formName = null)
     public function search($params)
     {
-        $query = ItemGroup::find()->JoinWith('itemTbl',true,'LEFT JOIN');
+        $query = ItemGroup::find()->JoinWith('itemTbl',true,'LEFT JOIN')
+								  ->JoinWith('storeTbl',true,'LEFT JOIN');
 
         // add conditions that should always apply here
 
@@ -78,13 +79,14 @@ class ItemGroupSearch extends ItemGroup
             'Item_group.OUTLET_ID' => $this->OUTLET_ID,
             'Item_group.ITEM_ID' => $this->ITEM_ID,
             'Item_group.PERSEN_MARGIN' => $this->PERSEN_MARGIN,
+            'store.OUTLET_NM' => $this->getAttribute('StoreNm'),
         ]);
 
         $query->andFilterWhere(['like', 'Item_group.CREATE_BY', $this->CREATE_BY])
             ->andFilterWhere(['like', 'Item_group.UPDATE_BY', $this->UPDATE_BY])
             ->andFilterWhere(['like', 'Item_group.GRP_DISPLAY',$this->getAttribute('GRP_DISPLAY')])
             ->andFilterWhere(['like', 'item.ITEM_NM',$this->getAttribute('ItemNm')])
-            ->andFilterWhere(['like', 'ITEM_BARCODE', $this->ITEM_BARCODE]);
+            ->andFilterWhere(['like', 'Item_group.ITEM_BARCODE', $this->ITEM_BARCODE]);
 
         return $dataProvider;
     }

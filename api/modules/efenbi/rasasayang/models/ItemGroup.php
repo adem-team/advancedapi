@@ -53,7 +53,7 @@ class ItemGroup extends \yii\db\ActiveRecord
             [['STATUS', 'LOCATE', 'LOCATE_SUB'], 'integer'],
             [['PERSEN_MARGIN'], 'number'],
             [['CREATE_BY', 'UPDATE_BY','ITEM_ID'], 'string', 'max' => 50],
-            [['ITEM_BARCODE','GRP_DISPLAY'], 'string', 'max' => 255],
+            [['ITEM_BARCODE','GRP_DISPLAY','FORMULA_ID'], 'string', 'max' => 255],
         ];
     }
 
@@ -81,6 +81,7 @@ class ItemGroup extends \yii\db\ActiveRecord
             'LocateNm' => Yii::t('app', 'LOCATE'),
             'LocatesubNm' => Yii::t('app', 'LOCATE-SUB'),
             'GRP_DISPLAY' => Yii::t('app', 'GRP_DISPLAY'),
+            'FORMULA_ID' => Yii::t('app', 'FORMULA.DISCOUNT'),
         ];
     }
 	
@@ -89,7 +90,50 @@ class ItemGroup extends \yii\db\ActiveRecord
 		return [
 			'OUTLET_ID'=>function($model){
 							return $model->OUTLET_ID;
-			}	
+			},
+			'StoreNm'=>function(){
+							return $this->storeNm;
+			},
+			'LocateNm'=>function(){
+							return $this->LocateNm;
+			},	
+			'LocatesubNm'=>function(){
+							return $this->LocatesubNm;
+			},	
+			'ITEM_BARCODE'=>function($model){
+							return $model->ITEM_BARCODE;
+			},	
+			'ItemNm'=>function(){
+							return $this->ItemNm;
+			},	
+			'GRP_DISPLAY'=>function($model){
+							return $model->GRP_DISPLAY;
+			},	
+			'HPP'=>function(){
+							return $this->HPP;
+			},	
+			'PERSEN_MARGIN'=>function(){
+							return $this->PERSEN_MARGIN;
+			},
+			'FORMULA_ID'=>function(){
+							return $this->FORMULA_ID;
+			},	
+			'STATUS'=>function($model){
+							return $model->STATUS;
+			},	
+			'CREATE_AT'=>function(){
+							return $this->CREATE_AT;
+			},	
+			'UPDATE_AT'=>function(){
+							return $this->UPDATE_AT;
+			},
+			'CREATE_BY'=>function(){
+							return $this->CREATE_BY;
+			},	
+			'UPDATE_BY'=>function(){
+							return $this->UPDATE_BY;
+			},	
+		
 		];
 	}
 	

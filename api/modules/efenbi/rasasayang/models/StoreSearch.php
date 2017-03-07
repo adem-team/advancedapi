@@ -64,9 +64,9 @@ class StoreSearch extends Store
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'ID' => $this->ID,
-            'STATUS' => $this->STATUS,
-            'LOCATE' => $this->LOCATE,
+            'store.ID' => $this->ID,
+            'store.STATUS' => $this->STATUS,
+            'store.LOCATE' => $this->LOCATE,
         ]);
 		/* SORTING Group Function Author -ptr.nov-*/
 		$dataProvider->sort->attributes['LocateNm'] = [
@@ -78,16 +78,16 @@ class StoreSearch extends Store
 			'desc' => ['locate.LOCATE_NAME' => SORT_DESC],
 		];
 		
-        $query->andFilterWhere(['like', 'CREATE_BY', $this->CREATE_BY])           
-            ->andFilterWhere(['like', 'CREATE_AT', $this->CREATE_AT])
-			 ->andFilterWhere(['like', 'UPDATE_BY', $this->UPDATE_BY])
-            ->andFilterWhere(['like', 'UPDATE_AT', $this->UPDATE_AT])
-            ->andFilterWhere(['like', 'LOCATE_SUB', $this->LOCATE_SUB])
-            ->andFilterWhere(['like', 'OUTLET_BARCODE', $this->OUTLET_BARCODE])
-            ->andFilterWhere(['like', 'OUTLET_NM', $this->OUTLET_NM])
-            ->andFilterWhere(['like', 'ALAMAT', $this->ALAMAT])
-            ->andFilterWhere(['like', 'PIC', $this->PIC])
-            ->andFilterWhere(['like', 'TLP', $this->TLP])
+        $query->andFilterWhere(['like', 'store.CREATE_BY', $this->CREATE_BY])           
+            ->andFilterWhere(['like', 'store.CREATE_AT', $this->CREATE_AT])
+			 ->andFilterWhere(['like', 'store.UPDATE_BY', $this->UPDATE_BY])
+            ->andFilterWhere(['like', 'store.UPDATE_AT', $this->UPDATE_AT])
+            ->andFilterWhere(['like', 'store.LOCATE_SUB', $this->LOCATE_SUB])
+            ->andFilterWhere(['like', 'store.OUTLET_BARCODE', $this->OUTLET_BARCODE])
+            ->andFilterWhere(['like', 'store.OUTLET_NM', $this->OUTLET_NM])
+            ->andFilterWhere(['like', 'store.ALAMAT', $this->ALAMAT])
+            ->andFilterWhere(['like', 'store.PIC', $this->PIC])
+            ->andFilterWhere(['like', 'store.TLP', $this->TLP])
             ->andFilterWhere(['like', 'locate.LOCATE_NAME', $this->getAttribute('LocateNm')])
             ->andFilterWhere(['like', 'locatesub.LOCATE_NAME', $this->getAttribute('LocatesubNm')]);
 

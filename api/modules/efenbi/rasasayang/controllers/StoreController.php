@@ -1,202 +1,105 @@
 <?php
-
-namespace lukisongroup\efenbi\rasasayang\controllers;
+namespace api\modules\efenbi\rasasayang\controllers;
 
 use Yii;
-use yii\web\Controller;
+use yii\rest\ActiveController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\auth\CompositeAuth;
+use yii\filters\auth\QueryParamAuth;
+use yii\filters\auth\HttpBasicAuth;
+use yii\filters\auth\HttpBearerAuth;
+use yii\filters\ContentNegotiator;
+use yii\web\Response;
 use yii\helpers\ArrayHelper;
 
-use lukisongroup\efenbi\rasasayang\models\Locate;
-use lukisongroup\efenbi\rasasayang\models\Store;
-use lukisongroup\efenbi\rasasayang\models\StoreSearch;
+use api\modules\efenbi\rasasayang\models\Locate;
+use api\modules\efenbi\rasasayang\models\Store;
+use api\modules\efenbi\rasasayang\models\StoreSearch;
 
 		
 /**
  * StoreController implements the CRUD actions for Store model.
  */
-class StoreController extends Controller
+class StoreController extends ActiveController
 {
     /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-	/*
-	* Declaration Component User Permission
-	* Function getPermission
-	* Modul Name[11=Calendar Promo]
-	* Permission LINK URL.
-	*/
-	public function getPermission(){
-		if (Yii::$app->getUserOpt->Modul_akses('11')){
-			return Yii::$app->getUserOpt->Modul_akses('11');
-		}else{
-			return false;
-		}
-	}  
-	/**
-     * Before Action Index
-	 * @author ptrnov  <piter@lukison.com>
-	 * @since 1.1
-     */
-	public function beforeAction($action){
-		if (Yii::$app->user->isGuest)  {
-			 Yii::$app->user->logout();
-			   $this->redirect(array('/site/login'));  //
-		}
-		// Check only when the user is logged in
-		if (!Yii::$app->user->isGuest)  {
-		   if (Yii::$app->session['userSessionTimeout']< time() ) {
-			   // timeout
-			   Yii::$app->user->logout();
-			   $this->redirect(array('/site/login'));  //
-		   } else {
-			   //Yii::$app->user->setState('userSessionTimeout', time() + Yii::app()->params['sessionTimeoutSeconds']) ;
-			   Yii::$app->session->set('userSessionTimeout', time() + Yii::$app->params['sessionTimeoutSeconds']);
-			   //Modul permission URL, author -ptr.nov@gail.com-
-			   if(self::getPermission()->BTN_CREATE OR self::getPermission()->BTN_VIEW){
-					return true;
-			   }else{
-				   $this->redirect(array('/site/validasi'));
-			   }
-		   }
-		} else {
-			return true;
-		}
-    }
-    /**
-     * Lists all Store models.
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-        $searchModel = new StoreSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single Store model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->renderAjax('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * Creates a new Store model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-		//Generate Code
-		$maxID=Store::find()->max('ID');
-		$newID=str_pad($maxID+1,4,"0",STR_PAD_LEFT);
-		
-        $model = new Store();
-		
-		$model->OUTLET_BARCODE = $newID;
-		$model->CREATE_BY =  Yii::$app->user->identity->username;
-		$model->CREATE_AT = date("Y-m-d H:i:s");
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->ID]);
-        } else {
-            return $this->renderAjax('_form', [
-                'model' => $model,
-            ]);
-        }
-    }
+	  * Source Database declaration 
+	 */
+    public $modelClass = 'api\modules\efenbi\rasasayang\models\StoreSearch';
+	public $serializer = [
+		'class' => 'yii\rest\Serializer',
+		'collectionEnvelope' => 'Store',
+	]; 
 	
 	/**
-     * Depdrop Sub Locate
-     * @author Piter
-     * @since 1.1.0
-     * @return mixed
+     * @inheritdoc
      */
-   public function actionLocateSub() {
-    $out = [];
-		if (isset($_POST['depdrop_parents'])) {
-        $parents = $_POST['depdrop_parents'];
-			if ($parents != null) {
-				$id = $parents[0];
-				$model = Locate::find()->asArray()->where(['PARENT'=>$id])->all();														
-														
-				foreach ($model as $key => $value) {
-				   $out[] = ['id'=>$value['ID'],'name'=> $value['LOCATE_NAME']];
-			    } 
-				echo json_encode(['output'=>$out, 'selected'=>'']);
-				return;
-           }
-       }
-       echo Json::encode(['output'=>'', 'selected'=>'']);
-   }
-   
-
-    /**
-     * Updates an existing Store model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->ID]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
+    public function behaviors()    {
+        return ArrayHelper::merge(parent::behaviors(), [
+            'authenticator' => [
+                'class' => CompositeAuth::className(),
+                'authMethods' => [
+                 // ['class' => HttpBearerAuth::className()],
+                 // ['class' => QueryParamAuth::className()],//, 'tokenParam' => 'access-token'],
+                ]
+            ], 
+			'bootstrap'=> [
+				'class' => ContentNegotiator::className(),
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON,'charset' => 'UTF-8',
+				],
+				'languages' => [
+					'en',
+					'de',
+				],
+			],			
+			'corsFilter' => [
+				'class' => \yii\filters\Cors::className(),
+				'cors' => [
+					// restrict access to
+					'Origin' => ['*'],
+					'Access-Control-Request-Method' => ['POST', 'PUT','GET'],
+					// Allow only POST and PUT methods
+					'Access-Control-Request-Headers' => ['X-Wsse'],
+					// Allow only headers 'X-Wsse'
+					'Access-Control-Allow-Credentials' => true,
+					// Allow OPTIONS caching
+					'Access-Control-Max-Age' => 3600,
+					// Allow the X-Pagination-Current-Page header to be exposed to the browser.
+					'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page'],
+				]		
+			],
+        ]);
+		
     }
-
-    /**
-     * Deletes an existing Store model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Store model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Store the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Store::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    }
+	
+	public function actions()
+    {		
+        return [
+            'index' => [
+                'class' => 'yii\rest\IndexAction',
+                'modelClass' => $this->modelClass,
+                'prepareDataProvider' => function () {
+					
+					$param=["StoreSearch"=>Yii::$app->request->queryParams];
+					//return $param;
+                    $searchModel = new StoreSearch();
+                    return $searchModel->search($param);
+					
+					/**
+					  * Manipulation Class Molel search & Yii::$app->request->queryParams.
+					  * Author	: ptr.nov@gmail.com
+					  * Since	: 06/03/2017
+					 */
+                    //return $searchModel->search(Yii::$app->request->queryParams);
+					//Use URL : item-groups?ItemGroupSearch[ITEM_BARCODE]=0001.0001
+					//UPDATE
+					//Use URL : item-groups?ITEM_BARCODE=0001.0001
+					//$param=["ItemGroupSearch"=>Yii::$app->request->queryParams];
+					//return$searchModel->search($param);
+                },
+            ],
+        ];
+    }	
 }

@@ -94,4 +94,53 @@ class Store extends \yii\db\ActiveRecord
 	{
 		return $this->locatesubTbl->LOCATE_NAME;
 	}	
+	
+	public function fields()
+	{
+		return [
+			'OUTLET_BARCODE'=>function($model){
+				return $model->OUTLET_BARCODE;
+			},
+			'OUTLET_NM'=>function($model){
+				return $model->OUTLET_NM;
+			},
+			'LOCATE'=>function($model){
+				return $model->LOCATE;
+			},	
+			'LOCATE_NAME'=>function(){
+				return $this->LocateNm;
+			},		
+			'LOCATE_SUB'=>function($model){
+				return $model->LOCATE_SUB;
+			},		
+			'LOCATE_SUB_NAME'=>function(){
+				return $this->LocatesubNm;
+			},		
+			'ALAMAT'=>function($model){
+				return $model->ALAMAT;
+			},		
+			'PIC'=>function($model){
+				return $model->PIC;
+			},	
+			'TLP'=>function($model){
+				return $model->TLP;
+			},
+			'STATUS'=>function($model){
+				return $model->STATUS;
+			},
+			'CREATE_BY'=>function($model){
+				return $model->CREATE_BY;
+			},	
+			'UPDATE_BY'=>function($model){
+				return $model->UPDATE_BY;
+			},		
+			'CREATE_AT'=>function($model){
+				return $model->CREATE_AT;
+			},		
+			'UPDATE_AT'=>function($model){
+				return $model->UPDATE_AT;
+			},		
+		
+		];
+	}
 }

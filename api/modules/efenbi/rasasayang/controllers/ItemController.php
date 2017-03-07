@@ -1,237 +1,104 @@
 <?php
 
-namespace lukisongroup\efenbi\rasasayang\controllers;
+namespace api\modules\efenbi\rasasayang\controllers;
 
 use Yii;
-use lukisongroup\efenbi\rasasayang\models\Item;
-use lukisongroup\efenbi\rasasayang\models\ItemSearch;
-use yii\web\Controller;
+use yii\rest\ActiveController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\widgets\ActiveForm;
+use yii\filters\auth\CompositeAuth;
+use yii\filters\auth\QueryParamAuth;
+use yii\filters\auth\HttpBasicAuth;
+use yii\filters\auth\HttpBearerAuth;
+use yii\filters\ContentNegotiator;
+use yii\web\Response;
+use yii\helpers\ArrayHelper;
+
+use api\modules\efenbi\rasasayang\models\Item;
+use api\modules\efenbi\rasasayang\models\ItemSearch;
 
 /**
  * ItemController implements the CRUD actions for Item model.
  */
-class ItemController extends Controller
+class ItemController extends ActiveController
 {
-    /**
+     /**
+	  * Source Database declaration 
+	 */
+    public $modelClass = 'api\modules\efenbi\rasasayang\models\ItemSearch';
+	public $serializer = [
+		'class' => 'yii\rest\Serializer',
+		'collectionEnvelope' => 'Item',
+	]; 
+	
+	/**
      * @inheritdoc
      */
-    public function behaviors()
-    {
+    public function behaviors()    {
+        return ArrayHelper::merge(parent::behaviors(), [
+            'authenticator' => [
+                'class' => CompositeAuth::className(),
+                'authMethods' => [
+                 // ['class' => HttpBearerAuth::className()],
+                 // ['class' => QueryParamAuth::className()],//, 'tokenParam' => 'access-token'],
+                ]
+            ], 
+			'bootstrap'=> [
+				'class' => ContentNegotiator::className(),
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON,'charset' => 'UTF-8',
+				],
+				'languages' => [
+					'en',
+					'de',
+				],
+			],			
+			'corsFilter' => [
+				'class' => \yii\filters\Cors::className(),
+				'cors' => [
+					// restrict access to
+					'Origin' => ['*'],
+					'Access-Control-Request-Method' => ['POST', 'PUT','GET'],
+					// Allow only POST and PUT methods
+					'Access-Control-Request-Headers' => ['X-Wsse'],
+					// Allow only headers 'X-Wsse'
+					'Access-Control-Allow-Credentials' => true,
+					// Allow OPTIONS caching
+					'Access-Control-Max-Age' => 3600,
+					// Allow the X-Pagination-Current-Page header to be exposed to the browser.
+					'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page'],
+				]		
+			],
+        ]);
+		
+    }
+	
+	public function actions()
+    {		
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
+            'index' => [
+                'class' => 'yii\rest\IndexAction',
+                'modelClass' => $this->modelClass,
+                'prepareDataProvider' => function () {
+					
+					$param=["ItemSearch"=>Yii::$app->request->queryParams];
+					//return $param;
+                    $searchModel = new ItemSearch();
+                    return $searchModel->search($param);
+					
+					/**
+					  * Manipulation Class Molel search & Yii::$app->request->queryParams.
+					  * Author	: ptr.nov@gmail.com
+					  * Since	: 06/03/2017
+					 */
+                    //return $searchModel->search(Yii::$app->request->queryParams);
+					//Use URL : item-groups?ItemGroupSearch[ITEM_BARCODE]=0001.0001
+					//UPDATE
+					//Use URL : item-groups?ITEM_BARCODE=0001.0001
+					//$param=["ItemGroupSearch"=>Yii::$app->request->queryParams];
+					//return$searchModel->search($param);
+                },
             ],
         ];
-    }
-	/*
-	* Declaration Component User Permission
-	* Function getPermission
-	* Modul Name[11=Calendar Promo]
-	* Permission LINK URL.
-	*/
-	public function getPermission(){
-		if (Yii::$app->getUserOpt->Modul_akses('11')){
-			return Yii::$app->getUserOpt->Modul_akses('11');
-		}else{
-			return false;
-		}
-	}  
-	/**
-     * Before Action Index
-	 * @author ptrnov  <piter@lukison.com>
-	 * @since 1.1
-     */
-	public function beforeAction($action){
-		if (Yii::$app->user->isGuest)  {
-			 Yii::$app->user->logout();
-			   $this->redirect(array('/site/login'));  //
-		}
-		// Check only when the user is logged in
-		if (!Yii::$app->user->isGuest)  {
-		   if (Yii::$app->session['userSessionTimeout']< time() ) {
-			   // timeout
-			   Yii::$app->user->logout();
-			   $this->redirect(array('/site/login'));  //
-		   } else {
-			   //Yii::$app->user->setState('userSessionTimeout', time() + Yii::app()->params['sessionTimeoutSeconds']) ;
-			   Yii::$app->session->set('userSessionTimeout', time() + Yii::$app->params['sessionTimeoutSeconds']);
-			   //Modul permission URL, author -ptr.nov@gail.com-
-			   if(self::getPermission()->BTN_CREATE OR self::getPermission()->BTN_VIEW){
-					return true;
-			   }else{
-				   $this->redirect(array('/site/validasi'));
-			   }
-		   }
-		} else {
-			return true;
-		}
-    }
-    /**
-     * Lists all Item models.
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-		$paramCari=Yii::$app->getRequest()->getQueryParam('id');
-		if($paramCari){
-		    $searchModel = new ItemSearch(['ITEM_ID'=>$paramCari]);
-			$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-		}else{
-			$searchModel = new ItemSearch();
-			$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-		}
-       
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single Item model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        $model=$this->findModel($id);
-		if ($model->load(Yii::$app->request->post())) {
-			$editUploadImage = $model->uploadImage();
-			$image64edit=$editUploadImage != ''? $this->convertBase64(file_get_contents($editUploadImage->tempName)): '';
-			$model->IMG64 = $image64edit;
-			$model->UPDATE_BY =  Yii::$app->user->identity->username;
-			// print_r($image64edit);
-			// die();
-			if($model->save()){
-				if ($editUploadImage !== false) {
-					$path=$model->pathImage();					
-					$editUploadImage->saveAs($path);
-					// print_r($path);
-					// die();
-				}
-				return $this->redirect(['index', 'id' => $model->ITEM_ID]);
-			}			
-        } else {
-            return $this->renderAjax('view', [
-				'model' => $this->findModel($id),
-			]);
-        }
-    }
-
-    /**
-     * Creates a new Item model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new Item();
-		//$model->scenario = "create";		
-        if ($model->load(Yii::$app->request->post())) {
-			//Image Base64
-				$ambilUploadImage = $model->uploadImage();
-				$image64=$ambilUploadImage != ''? $this->convertBase64(file_get_contents($ambilUploadImage->tempName)): '';
-			//Generate Code.
-				$maxID=Item::find()->max('ITEM_ID');
-				$newID=str_pad($maxID+1,4,"0",STR_PAD_LEFT);
-			//Attribute -Save-
-				$model->ITEM_ID =$newID;
-				$model->CREATE_BY =  Yii::$app->user->identity->username;
-				$model->CREATE_AT = date("Y-m-d H:i:s");
-				$model->IMG64 = $image64;
-			if ( $model->save()){
-				if ($ambilUploadImage !== false) {
-					$path=$model->pathImage();					
-					$ambilUploadImage->saveAs($path);
-					// print_r($path);
-					// die();
-				}
-			}
-			
-            //return $this->redirect(['view', 'id' => $model->ITEM_ID]);
-			return $this->redirect(['index', 'id' => $model->ITEM_ID]);
-        } else {
-            return $this->renderAjax('_form', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-	 public function actionValidItem()
-    {
-		$model = new Item();
-		$model->scenario = "create";
-		if(Yii::$app->request->isAjax && $model->load($_POST))
-		{
-			Yii::$app->response->format = 'json';
-			return ActiveForm::validate($model);
-		}
-		return 'test';
-    }
-	
-    /**
-     * Updates an existing Item model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->ITEM_ID]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    /**
-     * Deletes an existing Item model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Item model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Item the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        //if (($model = Item::findOne(['ITEM_ID'=>$id])) !== null) {
-        if (($model = Item::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    }
-	
-	public function convertBase64($base64)
-    {
-      $base64 = str_replace('data:image/jpg;base64,', '', $base64);
-      $base64 = base64_encode($base64);
-      $base64 = str_replace(' ', '+', $base64);
-
-      return $base64;
-
-    }
+    }	
 }
