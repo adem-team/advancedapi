@@ -114,10 +114,7 @@ class ItemGroup extends \yii\db\ActiveRecord
 			},	
 			'PERSEN_MARGIN'=>function(){
 							return $this->PERSEN_MARGIN;
-			},
-			'FORMULA_ID'=>function(){
-							return $this->FORMULA_ID;
-			},	
+			},			
 			'STATUS'=>function($model){
 							return $model->STATUS;
 			},	
@@ -132,7 +129,16 @@ class ItemGroup extends \yii\db\ActiveRecord
 			},	
 			'UPDATE_BY'=>function(){
 							return $this->UPDATE_BY;
+			},
+			'FORMULA_ID'=>function(){
+						return $this->FORMULA_ID;
 			},	
+			// 'FORMULA'=>function{
+				// 'FORMULA_ID'=>function(){
+							// return $this->FORMULA_ID;
+				// },	
+			// ],
+				
 		
 		];
 	}
@@ -141,7 +147,7 @@ class ItemGroup extends \yii\db\ActiveRecord
     {
       return ['OUTLET_ID','ITEM_BARCODE'];
     } */
-	
+		
 	//JOIN TABLE ITEM
 	public function getItemTbl()
 	{
@@ -199,4 +205,16 @@ class ItemGroup extends \yii\db\ActiveRecord
 		return $this->locatesubTbl->LOCATE_NAME;
 	}	
 	
+	//Join TABLE FORMULA
+	public function getFormula(){
+		return $this->hasMany(ItemFormulaDetail::className(), ['FORMULA_ID' => 'FORMULA_ID']);//->from(['formula' => Item::tableName()]);
+		//PR STATUS=1
+		//return $this->hasMany(ItemFormulaDetail::className(), ['FORMULA_ID' => 'FORMULA_ID'],['STATUS' => '1']);//->from(['formula' => Item::tableName()]);
+	}
+	
+	public function extraFields()
+	{
+		return ['formula'];
+		//return ['unit'];
+	}
 }

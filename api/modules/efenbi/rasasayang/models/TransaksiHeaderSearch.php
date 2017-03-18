@@ -5,12 +5,12 @@ namespace api\modules\efenbi\rasasayang\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use api\modules\efenbi\rasasayang\models\ItemFormula;
+use api\modules\efenbi\rasasayang\models\TransaksiHeader;
 
 /**
- * ItemFormulaSearch represents the model behind the search form about `api\modules\efenbi\rasasayang\models\ItemFormula`.
+ * TransaksiHeaderSearch represents the model behind the search form about `lukisongroup\efenbi\rasasayang\models\TransaksiHeader`.
  */
-class ItemFormulaSearch extends ItemFormula
+class TransaksiHeaderSearch extends TransaksiHeader
 {
     /**
      * @inheritdoc
@@ -18,12 +18,8 @@ class ItemFormulaSearch extends ItemFormula
     public function rules()
     {
         return [
-			[['CREATE_AT', 'UPDATE_AT','FORMULA_DCRIP','FORMULA_NM'], 'safe'],
-			[['STATUS'], 'integer'],
-			[['CREATE_BY', 'UPDATE_BY','FORMULA_ID',], 'string', 'max' => 50]
-            // [['CREATE_AT', 'UPDATE_AT', 'DISCOUNT_WAKTU1','DISCOUNT_WAKTU2','DISCOUNT_VALUE'], 'safe'],
-            // [['STATUS','DISCOUNT_QTY'], 'integer'],
-            // [['CREATE_BY', 'UPDATE_BY','FORMULA_ID','OUTLET_BARCODE','DISCOUNT_HARI'], 'string', 'max' => 50],
+            [['ID', 'STATUS', 'TRANS_TYPE'], 'integer'],
+            [['CREATE_BY', 'CREATE_AT', 'UPDATE_BY', 'UPDATE_AT', 'TRANS_DATE', 'OUTLET_ID', 'TRANS_ID'], 'safe'],
         ];
     }
 
@@ -45,7 +41,7 @@ class ItemFormulaSearch extends ItemFormula
      */
     public function search($params)
     {
-        $query = ItemFormula::find();
+        $query = TransaksiHeader::find();
 
         // add conditions that should always apply here
 
@@ -63,16 +59,18 @@ class ItemFormulaSearch extends ItemFormula
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'ID' => $this->ID,            
-            'FORMULA_ID' => $this->FORMULA_ID,            
+            'ID' => $this->ID,
+            'CREATE_AT' => $this->CREATE_AT,
+            'UPDATE_AT' => $this->UPDATE_AT,
             'STATUS' => $this->STATUS,
-            // 'DISCOUNT_PESEN' => $this->DISCOUNT_PESEN,
-            // 'DISCOUNT_HARI' => $this->DISCOUNT_HARI,
+            'TRANS_DATE' => $this->TRANS_DATE,
+            'TRANS_TYPE' => $this->TRANS_TYPE,
         ]);
-       $query->andFilterWhere(['like', 'CREATE_AT', $this->CREATE_AT])
-            ->andFilterWhere(['like', 'CREATE_AT', $this->CREATE_AT])
+
+        $query->andFilterWhere(['like', 'CREATE_BY', $this->CREATE_BY])
             ->andFilterWhere(['like', 'UPDATE_BY', $this->UPDATE_BY])
-            ->andFilterWhere(['like', 'UPDATE_AT', $this->UPDATE_AT]);
+            ->andFilterWhere(['like', 'OUTLET_ID', $this->OUTLET_ID])
+            ->andFilterWhere(['like', 'TRANS_ID', $this->TRANS_ID]);
 
         return $dataProvider;
     }

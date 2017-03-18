@@ -13,6 +13,7 @@ use yii\filters\auth\HttpBearerAuth;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
+use yii\web\Request;
 
 use api\modules\efenbi\rasasayang\models\Transaksi;
 use api\modules\efenbi\rasasayang\models\TransaksiSearch;
@@ -20,7 +21,7 @@ use api\modules\efenbi\rasasayang\models\TransaksiSearch;
 /**
  * TransaksiController implements the CRUD actions for Transaksi model.
  */
-class TransaksiController extends ActiveController
+class TransaksicobaController extends ActiveController
 {
     /**
       * Source Database declaration 
@@ -47,26 +48,34 @@ class TransaksiController extends ActiveController
                 'class' => ContentNegotiator::className(),
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,'charset' => 'UTF-8',
+                    'application/xml' => Response::FORMAT_XML,'charset' => 'UTF-8',
                 ],
                 'languages' => [
                     'en',
                     'de',
                 ],
             ],          
+			// 'request' => [
+				// 'parsers' => [
+					// 'application/json' => 'yii\web\JsonParser',
+				// ]
+			// ],
             'corsFilter' => [
                 'class' => \yii\filters\Cors::className(),
                 'cors' => [
                     // restrict access to
                     'Origin' => ['*'],
-                    'Access-Control-Request-Method' => ['POST', 'PUT','GET'],
-                    // Allow only POST and PUT methods
-                    'Access-Control-Request-Headers' => ['X-Wsse'],
+                    'Access-Control-Request-Method' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+                     // Allow only POST and PUT methods
+                     'Access-Control-Request-Headers' => ['X-Wsse'],
+                    //'Access-Control-Request-Headers' => ['X-Requested-With', 'Content-Type', 'accept', 'Authorization'],
                     // Allow only headers 'X-Wsse'
                     'Access-Control-Allow-Credentials' => true,
                     // Allow OPTIONS caching
-                    'Access-Control-Max-Age' => 3600,
+                    //'Access-Control-Max-Age' => 3600,
                     // Allow the X-Pagination-Current-Page header to be exposed to the browser.
-                    'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page'],
+                    'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page'],  
+
                 ]       
             ],
         ]);
@@ -79,12 +88,11 @@ class TransaksiController extends ActiveController
             'index' => [
                 'class' => 'yii\rest\IndexAction',
                 'modelClass' => $this->modelClass,
-                'prepareDataProvider' => function () {
-                    
+                'prepareDataProvider' => function () {                    
                     $param=["TransaksiSearch"=>Yii::$app->request->queryParams];
-                    //return $param;
+                    //return $param["TransaksiSearch"]["TRANS_TYPE"];
                     $searchModel = new TransaksiSearch();
-                    return $searchModel->search($param);
+					return $searchModel->search($param);
                 },
             ],
         ];
@@ -129,72 +137,66 @@ class TransaksiController extends ActiveController
      */
     public function actionCreate()
     {
-        
-        $model      = new Transaksi();
-        $params     = $_REQUEST;        
-        $model->attributes=$params;
-        // $model->CREATE_AT = date('Y:m:d H:i:s');//'2017-12-12 00:00';
-        $model->UPDATE_AT = date('Y:m:d H:i:s');//'2017-12-12 00:00';
-        $model->TRANS_DATE = date('Y:m:d H:i:s');//'2017-12-12 00:00';
-        //ERROR
-        $model->ITEM_HARGA = 100000;
-        $model->ITEM_DISCOUNT = 10;
-        if ($model->save()) 
-        {
-            return $model->attributes;
-        } 
-        else
-        {
-            return array('errors'=>$model->errors);
-        } 
-        
-    }
-
-    /**
-     * Updates an existing Transaksi model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
-    /* public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->ID]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    } */
-
-    /**
-     * Deletes an existing Transaksi model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-   /*  public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    } */
-
-    /**
-     * Finds the Transaksi model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Transaksi the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-  /*   protected function findModel($id)
-    {
-        if (($model = Transaksi::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    } */
+        //README -ptr.nov-
+		//Header Form 	: 	Content-Type application/json
+		//get request	:	Yii::$app->request->post();   
+		//return $params;
+		//return $params[0];
+		//return $params[0]['name'];
+		//order json object...
+		//return $params['data'];
+		//=====================================================
+       	//$model      = new Transaksi();
+		
+		$params    = Yii::$app->request->post();  
+		parse_str($params, $output);
+		/* foreach($params as $key => $val){
+			$model      = new Transaksi(); 
+			$model->attributes=$val;
+			//$model->TRANS_ID =$code;
+			$model->save();
+		} */
+		//$code='';
+		//$rsltMsg="no-Action";
+		/* if($params){
+			if($params['TYPE']!=4){ 
+				//if($params['TRANS_DATE']!=date("Y-m-d")){ 
+				if($params['TGL']!=date("Y-m-d")){ 
+					$rsltMsg="date not mactch";
+				}else{
+					//POST BOOKING=1|BUY=2|RECEVED=3
+					$code=$params['TYPE'].".".$params['STORE_ID'].".".str_replace("-","",$params['TGL']);
+					//Delete All
+					$models = Transaksi::find()->where(['TRANS_ID'=>$code])->All();
+					foreach($models as $model) {
+						$model->delete();
+					}
+					//Save & replace All.				
+					if(is_array($params['data'])){
+						foreach($params['data'] as $key => $val){
+							$model      = new Transaksi(); 
+							//$xxs[]=$val['ITEM_QTY'];
+							$model->attributes=$val;
+							$model->TRANS_ID =$code;
+							$model->save();
+						}
+					}
+					$rsltMsg="successful";				
+				}
+			}elseif($params['TYPE']==4){
+				//POST Data SELL=4.
+				if(is_array($params['data'])){
+					foreach($params['data'] as $key1 => $val1){
+						$model      = new Transaksi();
+						$model->attributes=$val1;
+						$model->save();
+					}
+					$rsltMsg="successful";	
+				}	
+			}
+		}  */
+		//return $model->attributes;
+		//return ["handling"=>$rsltMsg];
+		return $output;
+	}	
 }

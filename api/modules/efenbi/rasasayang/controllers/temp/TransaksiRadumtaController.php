@@ -1,4 +1,5 @@
 <?php
+
 namespace api\modules\efenbi\rasasayang\controllers;
 
 use Yii;
@@ -13,22 +14,21 @@ use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
 
+use api\modules\efenbi\rasasayang\models\Transaksi;
+use api\modules\efenbi\rasasayang\models\TransaksiSearch;
 
-use api\modules\efenbi\rasasayang\models\TransaksiType;
-use api\modules\efenbi\rasasayang\models\TransaksiTypeSearch;
-		
 /**
- * StoreController implements the CRUD actions for Store model.
+ * TransaksiController implements the CRUD actions for Transaksi model.
  */
-class TransaksiTypeController extends ActiveController
+class TransaksiController extends ActiveController
 {
     /**
 	  * Source Database declaration 
 	 */
-    public $modelClass = 'api\modules\efenbi\rasasayang\models\TransaksiTypeSearch';
+    public $modelClass = 'api\modules\efenbi\rasasayang\models\TransaksiSearch';
 	public $serializer = [
 		'class' => 'yii\rest\Serializer',
-		'collectionEnvelope' => 'TYPE',
+		'collectionEnvelope' => 'transaksi',
 	]; 
 	
 	/**
@@ -73,33 +73,28 @@ class TransaksiTypeController extends ActiveController
 		
     }
 	
-	public function actions()
-    {		
-        return [
-            'index' => [
-                'class' => 'yii\rest\IndexAction',
-                'modelClass' => $this->modelClass,
-                'prepareDataProvider' => function () {
-					
-					$param=["TransaksiTypeSearch"=>Yii::$app->request->queryParams];
-					//return $param;
-                    $searchModel = new TransaksiTypeSearch();
-                    return $searchModel->search($param);
-					
-					/**
-					  * Manipulation Class Molel search & Yii::$app->request->queryParams.
-					  * Author	: ptr.nov@gmail.com
-					  * Since	: 06/03/2017
-					 */
-                    //return $searchModel->search(Yii::$app->request->queryParams);
-					//Use URL : item-groups?ItemGroupSearch[ITEM_BARCODE]=0001.0001
-					//UPDATE
-					//Use URL : item-groups?ITEM_BARCODE=0001.0001
-					//$param=["ItemGroupSearch"=>Yii::$app->request->queryParams];
-					//return$searchModel->search($param);
-                },
-            ],
-        ];
-    }	
-}
 
+    public function actions()
+     {
+         $actions = parent::actions();
+        unset($actions['index'], $actions['update'], $actions['create'], $actions['delete'], $actions['view']);
+         //unset($actions['update'], $actions['create'], $actions['delete'], $actions['view']);
+         return $actions;
+     }
+
+    public function actionIndex()
+    {
+        // $data = '[{"nama":"Radumta"},{"nama":"Indonesia"}]';
+        $data = "[{'nama':'Radumta'},{'nama':'Indonesia'}]";
+        $datas = json_decode($data,true);
+        foreach ($datas as $key => $value) 
+        {
+            print_r($value['nama']);echo ' ';
+        }
+    }
+    public function actionCreate()
+    {
+        $post = Yii::$app->request->post();
+        return $post['rara'];
+    }
+}

@@ -5,12 +5,12 @@ namespace api\modules\efenbi\rasasayang\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use api\modules\efenbi\rasasayang\models\ItemFormula;
+use api\modules\efenbi\rasasayang\models\ItemFormulaDetail;
 
 /**
  * ItemFormulaSearch represents the model behind the search form about `api\modules\efenbi\rasasayang\models\ItemFormula`.
  */
-class ItemFormulaSearch extends ItemFormula
+class ItemFormulaDetailSearch extends ItemFormulaDetail
 {
     /**
      * @inheritdoc
@@ -18,12 +18,9 @@ class ItemFormulaSearch extends ItemFormula
     public function rules()
     {
         return [
-			[['CREATE_AT', 'UPDATE_AT','FORMULA_DCRIP','FORMULA_NM'], 'safe'],
-			[['STATUS'], 'integer'],
-			[['CREATE_BY', 'UPDATE_BY','FORMULA_ID',], 'string', 'max' => 50]
-            // [['CREATE_AT', 'UPDATE_AT', 'DISCOUNT_WAKTU1','DISCOUNT_WAKTU2','DISCOUNT_VALUE'], 'safe'],
-            // [['STATUS','DISCOUNT_QTY'], 'integer'],
-            // [['CREATE_BY', 'UPDATE_BY','FORMULA_ID','OUTLET_BARCODE','DISCOUNT_HARI'], 'string', 'max' => 50],
+            [['CREATE_AT', 'UPDATE_AT', 'DISCOUNT_WAKTU1','DISCOUNT_WAKTU2','DISCOUNT_VALUE'], 'safe'],
+            [['STATUS','DISCOUNT_QTY'], 'integer'],
+            [['CREATE_BY', 'UPDATE_BY','PARENT_ID','DISCOUNT_HARI'], 'string', 'max' => 50],
         ];
     }
 
@@ -45,7 +42,7 @@ class ItemFormulaSearch extends ItemFormula
      */
     public function search($params)
     {
-        $query = ItemFormula::find();
+        $query = ItemFormulaDetail::find();
 
         // add conditions that should always apply here
 
@@ -64,12 +61,16 @@ class ItemFormulaSearch extends ItemFormula
         // grid filtering conditions
         $query->andFilterWhere([
             'ID' => $this->ID,            
-            'FORMULA_ID' => $this->FORMULA_ID,            
+            'PARENT_ID' => $this->PARENT_ID,            
             'STATUS' => $this->STATUS,
-            // 'DISCOUNT_PESEN' => $this->DISCOUNT_PESEN,
-            // 'DISCOUNT_HARI' => $this->DISCOUNT_HARI,
+            'DISCOUNT_HARI' => $this->DISCOUNT_HARI,
         ]);
-       $query->andFilterWhere(['like', 'CREATE_AT', $this->CREATE_AT])
+       $query->andFilterWhere(['like', 'DISCOUNT_HARI', $this->DISCOUNT_HARI])
+            ->andFilterWhere(['like', 'DISCOUNT_QTY', $this->DISCOUNT_QTY])
+            ->andFilterWhere(['like', 'DISCOUNT_WAKTU1', $this->DISCOUNT_WAKTU1])
+            ->andFilterWhere(['like', 'DISCOUNT_WAKTU2', $this->DISCOUNT_WAKTU2])
+            ->andFilterWhere(['like', 'DISCOUNT_VALUE', $this->DISCOUNT_VALUE])
+            ->andFilterWhere(['like', 'CREATE_AT', $this->CREATE_AT])
             ->andFilterWhere(['like', 'CREATE_AT', $this->CREATE_AT])
             ->andFilterWhere(['like', 'UPDATE_BY', $this->UPDATE_BY])
             ->andFilterWhere(['like', 'UPDATE_AT', $this->UPDATE_AT]);

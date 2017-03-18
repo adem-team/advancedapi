@@ -27,7 +27,7 @@ class ItemGroupSearch extends ItemGroup
             [['CREATE_BY', 'CREATE_AT', 'UPDATE_BY', 'UPDATE_AT','ITEM_BARCODE', 'ItemNm','HPP', 'OUTLET_ID','GRP_DISPLAY'], 'safe'],
             [['STATUS','LOCATE', 'LOCATE_SUB'], 'integer'],
             [['PERSEN_MARGIN'], 'number'],
-            [['ITEM_ID','StoreNm'], 'string'],
+            [['ITEM_ID','StoreNm','FORMULA_ID'], 'string'],
         ];
     }
 

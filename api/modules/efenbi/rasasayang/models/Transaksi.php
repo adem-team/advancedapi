@@ -54,8 +54,8 @@ class Transaksi extends \yii\db\ActiveRecord
     {
         return [
             [['CREATE_AT', 'UPDATE_AT', 'TRANS_DATE'], 'safe'],
-            [['STATUS', 'TRANS_TYPE', 'ITEM_QTY'], 'integer'],
-            [['ITEM_HARGA', 'ITEM_DISCOUNT'], 'number'],
+            [['STATUS', 'TRANS_TYPE', 'ITEM_QTY'], 'safe'],
+            [['ITEM_HARGA', 'ITEM_DISCOUNT'], 'safe'],
             [['CREATE_BY', 'UPDATE_BY', 'TRANS_ID', 'OUTLET_ID', 'CONSUMER_PHONE', 'ITEM_ID'], 'string', 'max' => 50],
             [['USER_ID', 'OUTLET_NM', 'CONSUMER_NM', 'ITEM_NM', 'ITEM_DISCOUNT_TIME'], 'string', 'max' => 100],
             [['CONSUMER_EMAIL'], 'string', 'max' => 150],

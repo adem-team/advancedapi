@@ -20,7 +20,7 @@ use api\modules\efenbi\rasasayang\models\TransaksiSearch;
 /**
  * TransaksiController implements the CRUD actions for Transaksi model.
  */
-class TransaksiController extends ActiveController
+class TransaksitestController extends ActiveController
 {
     /**
       * Source Database declaration 
@@ -129,10 +129,39 @@ class TransaksiController extends ActiveController
      */
     public function actionCreate()
     {
+        //README -ptr.nov-
+		//Header Form 	: 	Content-Type application/json
+		//get request	:	Yii::$app->request->post();   
+		//return $params;
+		//return $params[0];
+		//return $params[0]['name'];
+		//order json object...
+		//return $params['data'];
+		//=====================================================
+        		
+		$params     = Yii::$app->request->post();
+		/* if($params){
+			if($params['TYPE']!=4){ // Bulan Sell
+				$code=$params['TYPE'].".".$params['STORE_ID'].".".str_replace("-","",$params['TGL']);
+				if(is_array($params['data'])){
+					foreach($params['data'] as $key => $val){
+						
+					}
+				}
+				
+			}
+		} */
+		return $params['data'];
+		//return $code;
+		//return $params;
+		//return $params[0]['name'];
         
-        $model      = new Transaksi();
-        $params     = $_REQUEST;        
-        $model->attributes=$params;
+		//$model      = new Transaksi();
+        //$params    = $_REQUEST;       
+        
+		
+		//print_r( $params);
+		/* $model->attributes=$params;
         // $model->CREATE_AT = date('Y:m:d H:i:s');//'2017-12-12 00:00';
         $model->UPDATE_AT = date('Y:m:d H:i:s');//'2017-12-12 00:00';
         $model->TRANS_DATE = date('Y:m:d H:i:s');//'2017-12-12 00:00';
@@ -146,7 +175,7 @@ class TransaksiController extends ActiveController
         else
         {
             return array('errors'=>$model->errors);
-        } 
+        }  */
         
     }
 

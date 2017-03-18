@@ -45,10 +45,13 @@ class ItemFormula extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['CREATE_AT', 'UPDATE_AT', 'DISCOUNT_WAKTU'], 'safe'],
-            [['STATUS', 'TYPE', 'ID_STORE', 'ID_ITEM', 'DISCOUNT_HARI'], 'integer'],
-            [['DISCOUNT_PESEN'], 'number'],
-            [['CREATE_BY', 'UPDATE_BY', 'TYPE_NM'], 'string', 'max' => 50],
+			[['CREATE_AT', 'UPDATE_AT','FORMULA_DCRIP','FORMULA_NM'], 'safe'],
+			[['STATUS'], 'integer'],
+			[['CREATE_BY', 'UPDATE_BY','FORMULA_ID',], 'string', 'max' => 50]
+           /*  [['CREATE_AT', 'UPDATE_AT', 'DISCOUNT_WAKTU1','DISCOUNT_WAKTU2','DISCOUNT_VALUE'], 'safe'],
+            [['STATUS','DISCOUNT_QTY'], 'integer'],
+            //[['DISCOUNT_VALUE'], 'number'],
+            [['CREATE_BY', 'UPDATE_BY','FORMULA_ID','OUTLET_BARCODE','DISCOUNT_HARI'], 'string', 'max' => 50], */
         ];
     }
 
@@ -58,20 +61,48 @@ class ItemFormula extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'ID_DTL_FORMULA' => Yii::t('app', 'RECEVED & RELEASE:
-ID UNIX, POSTING URL DAN AJAX'),
-            'CREATE_BY' => Yii::t('app', 'USER CREATED'),
-            'CREATE_AT' => Yii::t('app', 'Tanggal dibuat'),
-            'UPDATE_BY' => Yii::t('app', 'USER UPDATE'),
-            'UPDATE_AT' => Yii::t('app', 'Tanggal di update'),
-            'STATUS' => Yii::t('app', 'Status'),
-            'TYPE' => Yii::t('app', 'Type'),
-            'TYPE_NM' => Yii::t('app', 'Type  Nm'),
-            'ID_STORE' => Yii::t('app', 'Id  Store'),
-            'ID_ITEM' => Yii::t('app', 'Id  Item'),
-            'DISCOUNT_PESEN' => Yii::t('app', 'Discount  Pesen'),
-            'DISCOUNT_WAKTU' => Yii::t('app', 'Discount  Waktu'),
-            'DISCOUNT_HARI' => Yii::t('app', 'Discount  Hari'),
+            'ID' => Yii::t('app', 'ID'),
+            'CREATE_BY' => Yii::t('app', 'CREATE_BY'),
+            'CREATE_AT' => Yii::t('app', 'CREATE_AT'),
+            'UPDATE_BY' => Yii::t('app', 'UPDATE_BY'),
+            'UPDATE_AT' => Yii::t('app', 'UPDATE_AT'),
+            'STATUS' => Yii::t('app', 'STATUS'),           
+            'FORMULA_ID' => Yii::t('app', 'FORMULA_ID'),
+            'FORMULA_DCRIP' => Yii::t('app', 'DISCRIPTION'),
+            'FORMULA_NM' => Yii::t('app', 'NAME')
         ];
     }
+	
+	public function fields()
+	{
+		return [
+			'FORMULA_ID'=>function($model){
+				return $model->FORMULA_ID;
+			},
+			'FORMULA_NM'=>function($model){
+				return $model->FORMULA_NM;
+			},
+			'FORMULA_DCRIP'=>function($model){
+				return $model->FORMULA_DCRIP;
+			}			
+		];
+	}
+	
+	//JOIN FORMULA HEADER.
+	// public function getFormulaHeaderTbl()
+	// {
+		// return $this->hasOne(ItemFormula::className(), ['FORMULA_ID' => 'FORMULA_ID']);
+	// }	
+		
+	//JOIN FORMULA DETAIL VIA FORMULA HEADER.
+	// public function getFormulaDetailTbl()
+	// {
+		// return $this->hasMany(ItemFormulaDetail::className(), ['PARENT_ID' => 'ID']);
+	// }
+	// public function getDetailDiscountHari()
+	// {
+		// return  $this->formulaDetailTbl->DISCOUNT_HARI;
+	// }
+	
+	
 }
